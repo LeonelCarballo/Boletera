@@ -1,5 +1,8 @@
 package com.example.ProyectoBoletera.dominio;
 
+import jakarta.persistence.*;
+
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Usuario {
@@ -8,18 +11,25 @@ public abstract class Usuario {
     private Long id;
     private String nombre;
     private String email;
-    private String contrasena;
+    private String contrasenia;
     private String telefono;
 
     public Usuario() {
 
     }
 
-    public Usuario(Long id, String nombre, String email, String contrasena, String telefono) {
+    public Usuario(Long id, String nombre, String email, String contrasenia, String telefono) {
         this.id = id;
         this.nombre = nombre;
         this.email = email;
-        this.contrasena = contrasena;
+        this.contrasenia = contrasenia;
+        this.telefono = telefono;
+    }
+
+    public Usuario(String nombre, String email, String contrasenia, String telefono) {
+        this.nombre = nombre;
+        this.email = email;
+        this.contrasenia = contrasenia;
         this.telefono = telefono;
     }
 
@@ -48,11 +58,11 @@ public abstract class Usuario {
     }
 
     public String getContrasena() {
-        return contrasena;
+        return contrasenia;
     }
 
     public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
+        this.contrasenia = contrasena;
     }
 
     public String getTelefono() {

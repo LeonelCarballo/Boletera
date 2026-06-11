@@ -1,5 +1,8 @@
 package com.example.ProyectoBoletera.dominio;
 
+import com.example.ProyectoBoletera.dominio.enums.EstadoEventoEnum;
+import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,7 +17,7 @@ public class Evento {
     private String imagen;
 
     @Enumerated(EnumType.STRING)
-    private EstadoEvento estado;
+    private EstadoEventoEnum estado;
 
     @ManyToOne
     @JoinColumn(name = "organizador_id")
@@ -30,7 +33,7 @@ public class Evento {
     public Evento() {
     }
 
-    public Evento(String nombre, String descripcion, LocalDateTime fecha, String imagen, EstadoEvento estado, Organizador organizador, Lugar lugar) {
+    public Evento(String nombre, String descripcion, LocalDateTime fecha, String imagen, EstadoEventoEnum estado, Organizador organizador, Lugar lugar) {
         this.nombre = nombre;
         this.descripcion = descripcion;
         this.fecha = fecha;
@@ -80,11 +83,11 @@ public class Evento {
         this.imagen = imagen;
     }
 
-    public EstadoEvento getEstado() {
+    public EstadoEventoEnum getEstado() {
         return estado;
     }
 
-    public void setEstado(EstadoEvento estado) {
+    public void setEstado(EstadoEventoEnum estado) {
         this.estado = estado;
     }
 

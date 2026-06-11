@@ -2,6 +2,9 @@ package com.example.ProyectoBoletera.dominio;
 
 import java.util.List;
 
+import jakarta.persistence.*;
+
+
 @Entity
 public class Boleto {
     @Id

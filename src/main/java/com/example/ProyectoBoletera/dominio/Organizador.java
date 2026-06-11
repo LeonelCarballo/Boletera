@@ -1,5 +1,8 @@
 package com.example.ProyectoBoletera.dominio;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+
 import java.util.List;
 
 @Entity
@@ -12,8 +15,8 @@ public class Organizador extends Usuario {
     public Organizador() {
     }
 
-    public Organizador(String nombre, String email, String contrasena, String telefono, String empresa) {
-        super(nombre, email, contrasena, telefono);
+    public Organizador(String nombre, String email, String contrasenia, String telefono, String empresa) {
+        super(nombre, email, contrasenia, telefono);
         this.empresa = empresa;
     }
 
