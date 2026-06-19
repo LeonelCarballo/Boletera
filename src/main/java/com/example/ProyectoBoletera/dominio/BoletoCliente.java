@@ -1,4 +1,6 @@
 package com.example.ProyectoBoletera.dominio;
+
+import com.example.ProyectoBoletera.dominio.enums.EstadoBoleto;
 import jakarta.persistence.*;
 
 
