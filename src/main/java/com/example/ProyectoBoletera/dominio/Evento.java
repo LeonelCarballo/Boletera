@@ -1,5 +1,6 @@
 package com.example.ProyectoBoletera.dominio;
 
+import com.example.ProyectoBoletera.dominio.enums.CategoriaEvento;
 import com.example.ProyectoBoletera.dominio.enums.EstadoEvento;
 import jakarta.persistence.*;
 
@@ -15,6 +16,10 @@ public class Evento {
     private String descripcion;
     private LocalDateTime fecha;
     private String imagen;
+    private int capacidadTotal;
+
+    @Enumerated(EnumType.STRING)
+    private CategoriaEvento categoria;
 
     @Enumerated(EnumType.STRING)
     private EstadoEvento estado;
@@ -81,6 +86,22 @@ public class Evento {
 
     public void setImagen(String imagen) {
         this.imagen = imagen;
+    }
+
+    public int getCapacidadTotal() {
+        return capacidadTotal;
+    }
+
+    public void setCapacidadTotal(int capacidadTotal) {
+        this.capacidadTotal = capacidadTotal;
+    }
+
+    public CategoriaEvento getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(CategoriaEvento categoria) {
+        this.categoria = categoria;
     }
 
     public EstadoEvento getEstado() {
