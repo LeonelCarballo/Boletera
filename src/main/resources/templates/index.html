@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TicketPlace - Encuentra boletos para tus eventos favoritos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/styles/index.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">TicketPlace</a>
+
+    <nav class="main-nav">
+      <a href="/explorar" class="nav-link active">Explorar</a>
+      <a href="/eventos" class="nav-link">Eventos</a>
+      <a href="/recintos" class="nav-link">Recintos</a>
+    </nav>
+
+    <div class="header-actions">
+      <a href="/iniciar-sesion" class="link-entrar">Entrar</a>
+      <a href="/crear-cuenta" class="btn-primary">Registrarse</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <h1 class="hero-title">
+        Encuentra boletos para tus<br>
+        <span class="hero-accent">eventos favoritos</span>
+      </h1>
+      <p class="hero-subtitle">Explora conciertos, deportes y teatro con la mejor experiencia de compra en México.</p>
+
+      <form class="search-bar" action="/buscar" method="get">
+        <div class="search-field">
+          <label for="evento">Evento</label>
+          <input type="text" id="evento" name="evento" placeholder="¿Qué quieres ver?">
+        </div>
+        <div class="search-divider"></div>
+        <div class="search-field">
+          <label for="lugar">Lugar</label>
+          <input type="text" id="lugar" name="lugar" placeholder="CDMX, Monterrey...">
+        </div>
+        <div class="search-divider"></div>
+        <div class="search-field">
+          <label for="fecha">Fecha</label>
+          <input type="text" id="fecha" name="fecha" placeholder="Cualquier fecha">
+        </div>
+        <button type="submit" class="btn-buscar">
+          <img src="/imgs/icon-buscar.svg" alt="">
+          Buscar
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <section class="categorias">
+    <div class="categorias-inner">
+      <a href="/eventos?categoria=conciertos" class="categoria-item active">
+        <span class="categoria-icono"><img src="/imgs/icon-categoria-conciertos.svg" alt=""></span>
+        <span class="categoria-label">Conciertos</span>
+      </a>
+      <a href="/eventos?categoria=deportes" class="categoria-item">
+        <span class="categoria-icono"><img src="/imgs/icon-categoria-deportes.svg" alt=""></span>
+        <span class="categoria-label">Deportes</span>
+      </a>
+      <a href="/eventos?categoria=teatro" class="categoria-item">
+        <span class="categoria-icono"><img src="/imgs/icon-categoria-teatro.svg" alt=""></span>
+        <span class="categoria-label">Teatro</span>
+      </a>
+      <a href="/eventos?categoria=festivales" class="categoria-item">
+        <span class="categoria-icono"><img src="/imgs/icon-categoria-festivales.svg" alt=""></span>
+        <span class="categoria-label">Festivales</span>
+      </a>
+      <a href="/eventos?categoria=familiar" class="categoria-item">
+        <span class="categoria-icono"><img src="/imgs/icon-categoria-familiar.svg" alt=""></span>
+        <span class="categoria-label">Familiar</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="destacados">
+    <div class="destacados-header">
+      <div>
+        <h2>Experiencias Destacadas</h2>
+        <p>Selección especial para ti esta semana.</p>
+      </div>
+      <a href="/eventos" class="ver-todas">Ver todas →</a>
+    </div>
+
+    <div class="tarjetas-grid">
+
+      <article class="tarjeta-evento">
+        <div class="tarjeta-imagen">
+          <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=400&fit=crop" alt="Neo-Pop World Tour">
+        </div>
+        <div class="tarjeta-contenido">
+          <time class="tarjeta-fecha" datetime="2026-10-15">VIERNES, 15 OCT</time>
+          <h3 class="tarjeta-titulo">Neo-Pop World Tour</h3>
+          <p class="tarjeta-lugar">
+            <img src="/imgs/icon-ubicacion.svg" alt="" class="icono-inline">
+            Auditorio Nacional, CDMX
+          </p>
+          <div class="tarjeta-footer">
+            <span class="tarjeta-precio">$950 MXN</span>
+            <a href="/evento/1" class="btn-boletos">Boletos</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="tarjeta-evento">
+        <div class="tarjeta-imagen">
+          <img src="https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=600&h=400&fit=crop" alt="Neo-Pop World Tour">
+        </div>
+        <div class="tarjeta-contenido">
+          <time class="tarjeta-fecha" datetime="2026-10-15">VIERNES, 15 OCT</time>
+          <h3 class="tarjeta-titulo">Neo-Pop World Tour</h3>
+          <p class="tarjeta-lugar">
+            <img src="/imgs/icon-ubicacion.svg" alt="" class="icono-inline">
+            Auditorio Nacional, CDMX
+          </p>
+          <div class="tarjeta-footer">
+            <span class="tarjeta-precio">$950 MXN</span>
+            <a href="/evento/2" class="btn-boletos">Boletos</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="tarjeta-evento">
+        <div class="tarjeta-imagen">
+          <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=600&h=400&fit=crop" alt="Liga MX: Clásico Regio">
+        </div>
+        <div class="tarjeta-contenido">
+          <time class="tarjeta-fecha" datetime="2026-10-16">SÁBADO, 16 OCT</time>
+          <h3 class="tarjeta-titulo">Liga MX: Clásico Regio</h3>
+          <p class="tarjeta-lugar">
+            <img src="/imgs/icon-ubicacion.svg" alt="" class="icono-inline">
+            Estadio BBVA, Monterrey
+          </p>
+          <div class="tarjeta-footer">
+            <span class="tarjeta-precio">$1,250 MXN</span>
+            <a href="/evento/3" class="btn-boletos">Boletos</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="tarjeta-evento">
+        <div class="tarjeta-imagen">
+          <img src="https://images.unsplash.com/photo-1465847899084-d164df4dedc6?w=600&h=400&fit=crop" alt="Clásico a Luz de Velas">
+        </div>
+        <div class="tarjeta-contenido">
+          <time class="tarjeta-fecha" datetime="2026-10-17">DOMINGO, 17 OCT</time>
+          <h3 class="tarjeta-titulo">Clásico a Luz de Velas</h3>
+          <p class="tarjeta-lugar">
+            <img src="/imgs/icon-ubicacion.svg" alt="" class="icono-inline">
+            Ex-Hacienda, CDMX
+          </p>
+          <div class="tarjeta-footer">
+            <span class="tarjeta-precio">$450 MXN</span>
+            <a href="/evento/4" class="btn-boletos">Boletos</a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+</main>
+
+</body>
+</html>

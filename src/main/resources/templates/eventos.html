@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TicketPlace - Explorar Eventos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/styles.css">
+  <link rel="stylesheet" href="/styles/index.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="/" class="logo">TicketPlace</a>
+
+    <nav class="main-nav">
+      <a href="/explorar" class="nav-link">Explorar</a>
+      <a href="/eventos" class="nav-link active">Eventos</a>
+      <a href="/recintos" class="nav-link">Recintos</a>
+    </nav>
+
+    <div class="header-actions">
+      <a href="/iniciar-sesion" class="link-entrar">Entrar</a>
+      <a href="/crear-cuenta" class="btn-primary">Registrarse</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="catalogo-encabezado">
+    <p class="breadcrumb">INICIO <span>›</span> EXPLORAR EVENTOS</p>
+
+    <div class="catalogo-titulo-fila">
+      <div>
+        <h1 class="catalogo-titulo">Encuentra tu próximo <span class="hero-accent">momento.</span></h1>
+        <p class="catalogo-subtitulo">Experiencias exclusivas en las mejores ciudades de México.</p>
+      </div>
+
+      <button type="button" class="btn-ordenar">
+        <img src="/imgs/icon-ordenar.svg" alt="">
+        Ordenar: Recomendados
+      </button>
+    </div>
+  </section>
+
+  <section class="catalogo-cuerpo">
+
+    <aside class="filtros">
+      <div class="filtros-header">
+        <h2>Filtros</h2>
+        <a href="/eventos" class="filtros-limpiar">Limpiar</a>
+      </div>
+
+      <div class="filtro-grupo">
+        <label for="ubicacion">Ubicación</label>
+        <div class="input-icon">
+          <img src="/imgs/icon-ubicacion.svg" alt="">
+          <input type="text" id="ubicacion" name="ubicacion" placeholder="Ciudad o recinto">
+        </div>
+      </div>
+
+      <div class="filtro-grupo">
+        <h3>Categoría</h3>
+        <div class="filtro-checkbox">
+          <input type="checkbox" id="cat-todos" name="categoria" value="todos" checked>
+          <label for="cat-todos">Todos</label>
+        </div>
+        <div class="filtro-checkbox">
+          <input type="checkbox" id="cat-conciertos" name="categoria" value="conciertos">
+          <label for="cat-conciertos">Conciertos</label>
+        </div>
+        <div class="filtro-checkbox">
+          <input type="checkbox" id="cat-teatro" name="categoria" value="teatro">
+          <label for="cat-teatro">Teatro</label>
+        </div>
+        <div class="filtro-checkbox">
+          <input type="checkbox" id="cat-deportes" name="categoria" value="deportes">
+          <label for="cat-deportes">Deportes</label>
+        </div>
+      </div>
+
+      <div class="filtro-grupo">
+        <div class="filtro-presupuesto-fila">
+          <h3>Presupuesto</h3>
+          <span class="filtro-presupuesto-valor">MXN $5,000+</span>
+        </div>
+        <input type="range" id="presupuesto" name="presupuesto" min="0" max="5000" step="50" class="filtro-slider">
+      </div>
+    </aside>
+
+    <div class="tarjetas-grid">
+
+      <article class="tarjeta-evento">
+        <div class="tarjeta-imagen">
+          <span class="tarjeta-badge destacado">DESTACADO</span>
+          <button type="button" class="btn-favorito" aria-label="Guardar en favoritos">
+            <img src="/imgs/icon-favorito.svg" alt="">
+          </button>
+          <img src="https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=600&h=400&fit=crop" alt="Tour Horizontes Neón">
+        </div>
+        <div class="tarjeta-contenido">
+          <div class="tarjeta-meta">
+            <span class="tarjeta-categoria">CONCIERTO</span>
+            <time datetime="2026-05-12">12 May 2026</time>
+          </div>
+          <h3 class="tarjeta-titulo">Tour Horizontes Neón</h3>
+          <p class="tarjeta-lugar">
+            <img src="/imgs/icon-ubicacion.svg" alt="" class="icono-inline">
+            Auditorio Telmex, GDL
+          </p>
+          <div class="tarjeta-footer catalogo-footer">
+            <span class="tarjeta-precio-bloque">
+              <span class="tarjeta-precio-label">DESDE</span>
+              <span class="tarjeta-precio">$1,250 MXN</span>
+            </span>
+            <a href="/evento/1" class="btn-flecha" aria-label="Ver evento">→</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="tarjeta-evento">
+        <div class="tarjeta-imagen">
+          <button type="button" class="btn-favorito" aria-label="Guardar en favoritos">
+            <img src="/imgs/icon-favorito.svg" alt="">
+          </button>
+          <img src="https://images.unsplash.com/photo-1503095396549-807759245b35?w=600&h=400&fit=crop" alt="Ecos del Silencio">
+        </div>
+        <div class="tarjeta-contenido">
+          <div class="tarjeta-meta">
+            <span class="tarjeta-categoria">TEATRO</span>
+            <time datetime="2026-06-05">05 Jun 2026</time>
+          </div>
+          <h3 class="tarjeta-titulo">Ecos del Silencio</h3>
+          <p class="tarjeta-lugar">
+            <img src="/imgs/icon-ubicacion.svg" alt="" class="icono-inline">
+            Teatro del Estado, SON
+          </p>
+          <div class="tarjeta-footer catalogo-footer">
+            <span class="tarjeta-precio-bloque">
+              <span class="tarjeta-precio-label">DESDE</span>
+              <span class="tarjeta-precio">$850 MXN</span>
+            </span>
+            <a href="/evento/2" class="btn-flecha" aria-label="Ver evento">→</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="tarjeta-evento">
+        <div class="tarjeta-imagen">
+          <button type="button" class="btn-favorito" aria-label="Guardar en favoritos">
+            <img src="/imgs/icon-favorito.svg" alt="">
+          </button>
+          <img src="https://images.unsplash.com/photo-1522778119026-d647f0596c20?w=600&h=400&fit=crop" alt="Finales Globales 2026">
+        </div>
+        <div class="tarjeta-contenido">
+          <div class="tarjeta-meta">
+            <span class="tarjeta-categoria">DEPORTES</span>
+            <time datetime="2026-05-28">28 May 2026</time>
+          </div>
+          <h3 class="tarjeta-titulo">Finales Globales 2026</h3>
+          <p class="tarjeta-lugar">
+            <img src="/imgs/icon-ubicacion.svg" alt="" class="icono-inline">
+            Estadio Akron, GDL
+          </p>
+          <div class="tarjeta-footer catalogo-footer">
+            <span class="tarjeta-precio-bloque">
+              <span class="tarjeta-precio-label">DESDE</span>
+              <span class="tarjeta-precio">$2,400 MXN</span>
+            </span>
+            <a href="/evento/3" class="btn-flecha" aria-label="Ver evento">→</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="tarjeta-evento">
+        <div class="tarjeta-imagen">
+          <button type="button" class="btn-favorito" aria-label="Guardar en favoritos">
+            <img src="/imgs/icon-favorito.svg" alt="">
+          </button>
+          <img src="https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=600&h=400&fit=crop" alt="Gala del Jardín Verve">
+        </div>
+        <div class="tarjeta-contenido">
+          <div class="tarjeta-meta">
+            <span class="tarjeta-categoria">FESTIVAL</span>
+            <time datetime="2026-07-18">18 Jul 2026</time>
+          </div>
+          <h3 class="tarjeta-titulo">Gala del Jardín Verve</h3>
+          <p class="tarjeta-lugar">
+            <img src="/imgs/icon-ubicacion.svg" alt="" class="icono-inline">
+            Hacienda del Sol, HMO
+          </p>
+          <div class="tarjeta-footer catalogo-footer">
+            <span class="tarjeta-precio-bloque">
+              <span class="tarjeta-precio-label">DESDE</span>
+              <span class="tarjeta-precio">$950 MXN</span>
+            </span>
+            <a href="/evento/4" class="btn-flecha" aria-label="Ver evento">→</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="tarjeta-evento">
+        <div class="tarjeta-imagen">
+          <button type="button" class="btn-favorito" aria-label="Guardar en favoritos">
+            <img src="/imgs/icon-favorito.svg" alt="">
+          </button>
+          <img src="https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=600&h=400&fit=crop" alt="Sesiones de Jazz">
+        </div>
+        <div class="tarjeta-contenido">
+          <div class="tarjeta-meta">
+            <span class="tarjeta-categoria">EXPERIENCIA</span>
+            <time datetime="2026-08-02">02 Ago 2026</time>
+          </div>
+          <h3 class="tarjeta-titulo">Sesiones de Jazz</h3>
+          <p class="tarjeta-lugar">
+            <img src="/imgs/icon-ubicacion.svg" alt="" class="icono-inline">
+            Jazz Café, MTY
+          </p>
+          <div class="tarjeta-footer catalogo-footer">
+            <span class="tarjeta-precio-bloque">
+              <span class="tarjeta-precio-label">DESDE</span>
+              <span class="tarjeta-precio">$650 MXN</span>
+            </span>
+            <a href="/evento/5" class="btn-flecha" aria-label="Ver evento">→</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="tarjeta-evento">
+        <div class="tarjeta-imagen">
+          <button type="button" class="btn-favorito" aria-label="Guardar en favoritos">
+            <img src="/imgs/icon-favorito.svg" alt="">
+          </button>
+          <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=400&fit=crop" alt="Renacimiento Digital">
+        </div>
+        <div class="tarjeta-contenido">
+          <div class="tarjeta-meta">
+            <span class="tarjeta-categoria">ARTE</span>
+            <time datetime="2026-09-10">10 Sep 2026</time>
+          </div>
+          <h3 class="tarjeta-titulo">Renacimiento Digital</h3>
+          <p class="tarjeta-lugar">
+            <img src="/imgs/icon-ubicacion.svg" alt="" class="icono-inline">
+            Museo Franz Mayer, CDMX
+          </p>
+          <div class="tarjeta-footer catalogo-footer">
+            <span class="tarjeta-precio-bloque">
+              <span class="tarjeta-precio-label">DESDE</span>
+              <span class="tarjeta-precio">$400 MXN</span>
+            </span>
+            <a href="/evento/6" class="btn-flecha" aria-label="Ver evento">→</a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <nav class="paginacion" aria-label="Paginación de eventos">
+    <a href="?pagina=0" class="pagina-btn" aria-label="Página anterior">‹</a>
+    <a href="?pagina=1" class="pagina-numero activo">1</a>
+    <a href="?pagina=2" class="pagina-numero">2</a>
+    <a href="?pagina=3" class="pagina-numero">3</a>
+    <span class="pagina-puntos">...</span>
+    <a href="?pagina=12" class="pagina-numero">12</a>
+    <a href="?pagina=2" class="pagina-btn" aria-label="Página siguiente">›</a>
+  </nav>
+
+</main>
+
+</body>
+</html>

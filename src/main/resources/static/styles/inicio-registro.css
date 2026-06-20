@@ -1,0 +1,237 @@
+
+
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+
+:root {
+    --bg-color-dark: #8a0d49;      /* Fondo principal: magenta (antes era negro/oliva) */
+    --card-bg-dark: #ffffff;       /* Tarjeta del formulario: blanca (antes era oscura) */
+    --text-color-dark: #1b1320;    /* Texto principal: oscuro (antes era casi blanco) */
+    --links-color-dark: #a30f55;   /* Color normal de enlaces: magenta */
+    --links-hover-dark: #5e0b35;   /* Color de enlaces al pasar el mouse: magenta oscuro */
+    --nav-links: #b8125f;          /* Color de botones/acentos: magenta vivo */
+    --highlight: #5e0b35;          /* Color de resaltados/hover: magenta muy oscuro */
+    --radius: 12px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--bg-color-dark);
+    color: var(--text-color-dark);
+    font-family: 'Quicksand', sans-serif;
+    line-height: 1.6;
+    display: grid;
+    grid-template-rows: 1fr;
+    min-height: 100vh;
+}
+
+.auth-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.auth-card{
+    background-color: var(--card-bg-dark);
+    width: 100%;
+    max-width: 420px;
+    padding: 40px 30px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+    border: 1px solid #ece6ee;
+}
+
+.form-header{
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-header h3{
+    font-size: 1.8rem;
+    color: var(--text-color-dark);
+    margin-bottom: 5px;
+}
+
+.form-subtitle{
+    font-size: 0.9rem;
+    color: #5b5460;
+}
+
+.form-group{
+    margin-bottom: 20px;
+}
+
+.form-group label{
+    display: block;
+    font-size: .85rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: #5b5460;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"],
+select,
+textarea{
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--radius);
+    border: 1px solid #ece6ee;
+    background-color: #ffffff;
+    color: var(--text-color-dark);
+    font-family: "Quicksand";
+    font-size: 0.95rem;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    outline: none;
+    border-color: var(--nav-links);
+    box-shadow: 0 0 8px rgba(184,18,95,0.25);
+}
+
+input::placeholder,
+textarea::placeholder{
+    color: #b9b2bd;
+    font-style: italic;
+}
+
+.checkbox-group{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.checkbox-group input[type="checkbox"]{
+    accent-color: var(--nav-links);
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+}
+
+.checkbox-group label{
+    margin: 0;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: #5b5460;
+}
+
+.checkbox-group a{
+    color: var(--links-color-dark);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.checkbox-group a:hover{
+    color: var(--links-hover-dark);
+}
+
+.link{
+    text-align: center;
+    margin-top: 15px;
+    font-size: 0.9rem;
+    display: flex;
+    flex-direction: column;
+    color: #5b5460;
+}
+
+.link a{
+    color: var(--links-color-dark);
+    font-weight: 600;
+}
+
+.link a:hover{
+    color: var(--links-hover-dark);
+}
+
+button{
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--radius);
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+}
+
+.btn-primary{
+    background-color: var(--nav-links);
+    color: white;
+}
+
+.btn-primary:hover{
+    background-color: var(--highlight);
+    color: white;
+    box-shadow: 0 0 15px rgba(184,18,95,0.4);
+}
+
+footer{
+    padding: 30px 20px;
+    text-align: center;
+    border-top: 1px solid rgba(255,255,255,0.15);
+}
+
+footer p{
+    font-size: .85rem;
+    color: rgba(255,255,255,0.85);
+    margin-top: 10px;
+}
+
+.input-icon{
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon img{
+    position: absolute;
+    left: 12px;
+    width: 18px;
+    height: 18px;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.input-icon input{
+    padding-left: 40px;
+}
+
+.toggle-pw{
+    position: absolute;
+    right: 10px;
+    width: auto;
+    margin-top: 0;
+    padding: 0;
+    background: none;
+    border: none;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.toggle-pw img{
+    position: static;
+    width: 18px;
+    height: 18px;
+    opacity: 0.6;
+}
+
+.toggle-pw:hover img{
+    opacity: 1;
+}
+
+.input-icon:has(.toggle-pw) input{
+    padding-right: 40px;
+}
