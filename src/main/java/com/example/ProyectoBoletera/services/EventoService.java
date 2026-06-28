@@ -1,11 +1,25 @@
 package com.example.ProyectoBoletera.services;
 
+import com.example.ProyectoBoletera.dominio.enums.CategoriaEvento;
+import com.example.ProyectoBoletera.dominio.enums.EstadoEvento;
+import com.example.ProyectoBoletera.dominio.model.Administrador;
 import com.example.ProyectoBoletera.dominio.model.Evento;
+import com.example.ProyectoBoletera.dominio.model.Lugar;
+import com.example.ProyectoBoletera.dominio.model.Usuario;
+import com.example.ProyectoBoletera.dominio.repository.AdministradorRepository;
 import com.example.ProyectoBoletera.dominio.repository.EventoRepository;
+import com.example.ProyectoBoletera.dominio.repository.LugarRepository;
+import com.example.ProyectoBoletera.dominio.repository.UsuarioRepository;
+import com.example.ProyectoBoletera.exception.ResourceNotFoundException;
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EventoService {
@@ -13,17 +27,67 @@ public class EventoService {
     @Autowired
     private EventoRepository eventoRepository;
 
+    @Autowired
+    private AdministradorRepository administradorRepository;
+
+    @Autowired
+    private LugarRepository lugarRepository;
+
+    @Autowired
+    private Cloudinary cloudinary;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
     public List<Evento> obtenerTodos() {
         return eventoRepository.findAll();
     }
 
     public Evento obtenerPorId(Long id) {
         return eventoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Evento no encontrado con id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Evento no encontrado con id " + id));
     }
 
     public Evento crearEvento(Evento evento) {
         return eventoRepository.save(evento);
+    }
+
+    public Evento crearEventoDesdeFormulario(String nombre, String descripcion, String fecha,
+                                             int capacidadTotal, CategoriaEvento categoria,
+                                             Long lugarId, String correoAdmin, MultipartFile imagen) {
+
+        Usuario usuario = usuarioRepository.findByEmail(correoAdmin)
+                .orElseThrow(() -> new ResourceNotFoundException("Administrador no encontrado"));
+        Administrador administrador = (Administrador) usuario;
+
+        Lugar lugar = lugarRepository.findById(lugarId)
+                .orElseThrow(() -> new ResourceNotFoundException("Lugar no encontrado"));
+
+        Evento evento = new Evento();
+        evento.setNombre(nombre);
+        evento.setDescripcion(descripcion);
+        evento.setFecha(LocalDateTime.parse(fecha));
+        evento.setCapacidadTotal(capacidadTotal);
+        evento.setCategoria(categoria);
+        evento.setEstado(EstadoEvento.EN_VENTA);
+        evento.setAdministrador(administrador);
+        evento.setLugar(lugar);
+
+        if (imagen != null && !imagen.isEmpty()) {
+            evento.setImagenUrl(subirImagenCloudinary(imagen));
+        }
+
+        return eventoRepository.save(evento);
+    }
+
+    private String subirImagenCloudinary(MultipartFile file) {
+        try {
+            Map uploadResult = cloudinary.uploader().upload(file.getBytes(), ObjectUtils.emptyMap());
+            return uploadResult.get("secure_url").toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public Evento actualizarEventoCompleto(Long id, Evento datosNuevos) {
@@ -46,5 +110,9 @@ public class EventoService {
 
     public void eliminarEvento(Long id) {
         eventoRepository.deleteById(id);
+    }
+
+    public long contarTodos() {
+        return eventoRepository.count();
     }
 }

@@ -39,4 +39,8 @@ public class UsuarioService {
         }
         usuarioRepository.deleteById(id);
     }
+
+    public long contarTodos() {
+        return usuarioRepository.count();
+    }
 }

@@ -2,6 +2,7 @@ package com.example.ProyectoBoletera.services;
 
 import com.example.ProyectoBoletera.dominio.model.Lugar;
 import com.example.ProyectoBoletera.dominio.repository.LugarRepository;
+import com.example.ProyectoBoletera.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +20,7 @@ public class LugarService {
 
     public Lugar obtenerPorId(Long id) {
         return lugarRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Lugar no encontrado con id " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Lugar no encontrado con id " + id));
     }
 
     public Lugar crearLugar(Lugar lugar) {
@@ -46,5 +47,9 @@ public class LugarService {
 
     public void eliminarLugar(Long id) {
         lugarRepository.deleteById(id);
+    }
+
+    public long contarTodos() {
+        return lugarRepository.count();
     }
 }

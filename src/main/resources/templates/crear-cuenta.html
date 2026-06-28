@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,6 +17,8 @@
     </div>
 
     <form class="auth-form" method="post" action="/crear-cuenta" enctype="application/x-www-form-urlencoded">
+
+      <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
 
       <div class="form-group">
         <label for="nombre">Nombre Completo</label>
@@ -75,7 +77,11 @@
 
     </form>
 
-    <p class="link">¿Ya tienes una cuenta? <a href="iniciar-sesion.html">Inicia sesión aquí</a></p>
+    <p class="link">¿Ya tienes una cuenta? <a href="/admin/login">Inicia sesión aquí</a></p>
+
+    <div class="nota-dev">
+      <p><strong>Nota de prueba:</strong> Por el momento, todas las cuentas creadas reciben el rol de <strong>Administrador</strong> automáticamente.</p>
+    </div>
   </section>
 </main>
 

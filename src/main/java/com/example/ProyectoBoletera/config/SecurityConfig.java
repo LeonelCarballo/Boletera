@@ -20,10 +20,24 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable())
-                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/admin/login", "/styles/**", "/imgs/**").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().permitAll()
+                )
+                .formLogin(form -> form
+                        .loginPage("/admin/login")
+                        .loginProcessingUrl("/admin/login")
+                        .usernameParameter("correo")
+                        .passwordParameter("contrasenia")
+                        .defaultSuccessUrl("/admin/dashboard", true)
+                        .failureUrl("/admin/login?error=true")
+                        .permitAll()
+                )
+                .logout(logout -> logout
+                        .logoutUrl("/admin/logout")
+                        .logoutSuccessUrl("/admin/login")
+                        .permitAll()
                 );
 
         return http.build();
