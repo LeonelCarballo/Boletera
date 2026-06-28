@@ -15,11 +15,6 @@ public class MainController {
         return "index";
     }
 
-    @GetMapping({"/iniciar-sesion", "/iniciar-sesion.html"})
-    public String iniciarSesion(){
-        return "iniciar-sesion";
-    }
-
     @GetMapping({"/crear-cuenta", "/crear-cuenta.html"})
     public String crearCuenta(){
         return "crear-cuenta";
