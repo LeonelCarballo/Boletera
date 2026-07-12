@@ -1,10 +1,9 @@
 package com.example.ProyectoBoletera.config;
 
-import com.example.ProyectoBoletera.config.ApiAuthEntryPoint;
-import com.example.ProyectoBoletera.config.JwtAuthFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -51,11 +50,31 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/admin/login", "/styles/**", "/imgs/**").permitAll()
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        // Recursos estáticos y página de error interna de Spring
+                        .requestMatchers("/styles/**", "/imgs/**", "/error").permitAll()
+
+                        // Páginas públicas server-rendered
+                        .requestMatchers(HttpMethod.GET, "/", "/index", "/index.html", "/eventos").permitAll()
+
+                        // Login y registro de clientes (emiten el JWT)
                         .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/api/compras/**").authenticated()
-                        .anyRequest().permitAll()
+
+                        // Catálogo público: solo lectura
+                        .requestMatchers(HttpMethod.GET, "/api/eventos/**", "/api/lugares/**").permitAll()
+
+                        // Compras: solo clientes autenticados con JWT
+                        .requestMatchers("/api/compras/**").hasRole("CLIENTE")
+
+                        // Panel de administración (sesión + form login)
+                        .requestMatchers("/admin/login").permitAll()
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+
+                        // Resto de la API (gestión de eventos, lugares, usuarios,
+                        // clientes y administradores): solo admin
+                        .requestMatchers("/api/**").hasRole("ADMIN")
+
+                        // Todo lo que no esté listado arriba queda denegado
+                        .anyRequest().denyAll()
                 )
                 .exceptionHandling(exceptions -> exceptions
                         .defaultAuthenticationEntryPointFor(

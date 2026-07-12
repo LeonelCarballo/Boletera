@@ -37,11 +37,6 @@ public class MainController {
         return "index";
     }
 
-    @GetMapping({"/crear-cuenta", "/crear-cuenta.html"})
-    public String crearCuenta(){
-        return "crear-cuenta";
-    }
-
     @GetMapping("/eventos")
     public String eventos(Model model, Authentication authentication) {
         agregarNombreUsuario(model, authentication);

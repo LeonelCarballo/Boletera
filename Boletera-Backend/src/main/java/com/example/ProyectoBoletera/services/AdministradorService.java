@@ -4,6 +4,7 @@ import com.example.ProyectoBoletera.dominio.model.Administrador;
 import com.example.ProyectoBoletera.dominio.repository.AdministradorRepository;
 import com.example.ProyectoBoletera.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +14,9 @@ public class AdministradorService {
 
     @Autowired
     private AdministradorRepository administradorRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public List<Administrador> obtenerTodos() {
         return administradorRepository.findAll();
@@ -24,6 +28,7 @@ public class AdministradorService {
     }
 
     public Administrador crear(Administrador administrador) {
+        administrador.setContrasenia(passwordEncoder.encode(administrador.getContrasenia()));
         return administradorRepository.save(administrador);
     }
 }
