@@ -46,6 +46,7 @@
                          th:text="${evento.estado}">Estado</div>
 
                     <div class="card-actions-footer">
+                        <a th:href="@{/admin/eventos/{id}/editar(id=${evento.id})}" class="btn-card-action color-edit">Editar</a>
                         <form th:action="@{/admin/eventos/{id}/eliminar(id=${evento.id})}" method="post" style="display:inline">
                             <button type="submit" class="btn-card-action color-delete"
                                     onclick="return confirm('¿Eliminar este evento?')">Borrar</button>

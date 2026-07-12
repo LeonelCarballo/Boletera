@@ -27,25 +27,26 @@ public class LugarService {
         return lugarRepository.save(lugar);
     }
 
-    public Lugar actualizarLugarCompleto(Long id, Lugar datosNuevos) {
-        Lugar lugar = obtenerPorId(id);
-        datosNuevos.setId(lugar.getId());
-        return lugarRepository.save(datosNuevos);
-    }
-
-    public Lugar actualizarLugarParcial(Long id, Lugar datosParciales) {
+    public Lugar actualizarLugar(Long id, Lugar datosNuevos) {
         Lugar lugar = obtenerPorId(id);
 
-        if (datosParciales.getNombre() != null) lugar.setNombre(datosParciales.getNombre());
-        if (datosParciales.getDireccion() != null) lugar.setDireccion(datosParciales.getDireccion());
-        if (datosParciales.getCiudad() != null) lugar.setCiudad(datosParciales.getCiudad());
-        if (datosParciales.getEstado() != null) lugar.setEstado(datosParciales.getEstado());
-        if (datosParciales.getCapacidad() != null) lugar.setCapacidad(datosParciales.getCapacidad());
+        lugar.setNombre(datosNuevos.getNombre());
+        lugar.setDireccion(datosNuevos.getDireccion());
+        lugar.setCiudad(datosNuevos.getCiudad());
+        lugar.setEstado(datosNuevos.getEstado());
+        lugar.setCapacidad(datosNuevos.getCapacidad());
 
         return lugarRepository.save(lugar);
     }
 
     public void eliminarLugar(Long id) {
+        Lugar lugar = obtenerPorId(id);
+
+        if (lugar.getEventos() != null && !lugar.getEventos().isEmpty()) {
+            throw new IllegalArgumentException("No se puede eliminar el lugar '" + lugar.getNombre() +
+                    "' porque tiene " + lugar.getEventos().size() + " evento(s) asociado(s).");
+        }
+
         lugarRepository.deleteById(id);
     }
 

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="~{admin/fragments/layout :: head('Nuevo Evento')}"></head>
+<head th:replace="~{admin/fragments/layout :: head(${evento != null} ? 'Editar Evento' : 'Nuevo Evento')}"></head>
 <body class="dashboard-layout">
 
 <div th:replace="~{admin/fragments/layout :: sidebar}"></div>
@@ -13,32 +13,46 @@
     <main class="dashboard-content">
         <div class="content-heading">
             <div class="heading-text">
-                <h1>Nuevo Evento</h1>
-                <p class="subtitle">Crea un nuevo evento en la plataforma.</p>
+                <h1 th:text="${evento != null} ? 'Editar Evento' : 'Nuevo Evento'">Nuevo Evento</h1>
+                <p class="subtitle">Completa la información del evento.</p>
             </div>
         </div>
 
         <div class="form-card" style="max-width: 600px;">
-            <form th:action="@{/admin/eventos}" method="post" enctype="multipart/form-data">
+
+            <div th:if="${error}"
+                 style="color: #DC2626; background: #FEF2F2; padding: 12px 16px; border-radius: 6px; margin-bottom: 16px;">
+                ⚠️ <span th:text="${error}"></span>
+            </div>
+
+            <form th:action="${evento != null} ? @{/admin/eventos/{id}(id=${evento.id})} : @{/admin/eventos}"
+                  method="post" enctype="multipart/form-data" id="formEvento">
 
                 <div class="form-group">
                     <label for="nombre">Nombre del Evento</label>
-                    <input type="text" id="nombre" name="nombre" required>
+                    <input type="text" id="nombre" name="nombre" required
+                           th:value="${evento != null} ? ${evento.nombre} : ''">
                 </div>
 
                 <div class="form-group">
                     <label for="descripcion">Descripción</label>
-                    <textarea id="descripcion" name="descripcion" rows="4"></textarea>
+                    <textarea id="descripcion" name="descripcion" rows="4"
+                              th:text="${evento != null} ? ${evento.descripcion} : ''"></textarea>
                 </div>
 
                 <div class="form-grid-2col">
                     <div class="form-group">
                         <label for="fecha">Fecha y Hora</label>
-                        <input type="datetime-local" id="fecha" name="fecha" required>
+                        <input type="datetime-local" id="fecha" name="fecha" required
+                               th:value="${evento != null} ? ${#temporals.format(evento.fecha, 'yyyy-MM-dd''T''HH:mm')} : ''"
+                               th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}">
                     </div>
                     <div class="form-group">
-                        <label for="capacidadTotal">Capacidad Total</label>
-                        <input type="number" id="capacidadTotal" name="capacidadTotal" required min="1">
+                        <label for="capacidadTotal">Boletos utilizados</label>
+                        <input type="number" id="capacidadTotal" name="capacidadTotal" required min="1" readonly
+                               style="background-color: rgba(0,0,0,0.04); cursor: not-allowed;"
+                               th:value="${evento != null} ? ${evento.capacidadTotal} : 0">
+                        <small style="color: var(--color-neutro); font-size: 0.75rem;">Se calcula automáticamente con los boletos.</small>
                     </div>
                 </div>
 
@@ -46,44 +60,175 @@
                     <label for="categoria">Categoría</label>
                     <select id="categoria" name="categoria" required>
                         <option value="">--Selecciona una opción</option>
-                        <option value="MUSICA">Música</option>
-                        <option value="DEPORTES">Deportes</option>
-                        <option value="TEATRO">Teatro</option>
-                        <option value="CONFERENCIA">Conferencia</option>
-                        <option value="FESTIVAL">Festival</option>
-                        <option value="FAMILIAR">Familiar</option>
-                        <option value="OTRO">Otro</option>
+                        <option value="MUSICA" th:selected="${evento != null and evento.categoria.name() == 'MUSICA'}">Música</option>
+                        <option value="DEPORTES" th:selected="${evento != null and evento.categoria.name() == 'DEPORTES'}">Deportes</option>
+                        <option value="TEATRO" th:selected="${evento != null and evento.categoria.name() == 'TEATRO'}">Teatro</option>
+                        <option value="CONFERENCIA" th:selected="${evento != null and evento.categoria.name() == 'CONFERENCIA'}">Conferencia</option>
+                        <option value="FESTIVAL" th:selected="${evento != null and evento.categoria.name() == 'FESTIVAL'}">Festival</option>
+                        <option value="FAMILIAR" th:selected="${evento != null and evento.categoria.name() == 'FAMILIAR'}">Familiar</option>
+                        <option value="OTRO" th:selected="${evento != null and evento.categoria.name() == 'OTRO'}">Otro</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <label for="lugarId">Lugar</label>
-                    <select id="lugarId" name="lugarId" required>
-                        <option value="">--Selecciona un lugar</option>
+                    <select id="lugarId" name="lugarId" required onchange="actualizarCapacidadMaxima()">
+                        <option value="" data-capacidad="0">--Selecciona un lugar</option>
                         <option th:each="lugar : ${lugares}"
                                 th:value="${lugar.id}"
-                                th:text="${lugar.nombre} + ' - ' + ${lugar.ciudad}">
+                                th:attr="data-capacidad=${lugar.capacidad}"
+                                th:selected="${evento != null and evento.lugar != null and evento.lugar.id == lugar.id}"
+                                th:text="${lugar.nombre} + ' - ' + ${lugar.ciudad} + ' (Cap. ' + ${lugar.capacidad} + ')'">
                         </option>
                     </select>
+                    <small id="capacidadLugar" style="color: var(--color-neutro); font-size: 0.75rem;"></small>
+                </div>
+
+                <div style="margin-top: 24px; margin-bottom: 8px;">
+                    <h3 style="font-size: 15px; font-weight: 700; color: var(--color-font-secondary);">Tipos de Boleto</h3>
+                    <p style="font-size: 0.8rem; color: var(--color-neutro); margin-top: 4px;">La suma total no puede superar la capacidad del lugar.</p>
+                </div>
+
+                <div id="errorBoletos" style="display:none; color: #DC2626; font-size: 0.85rem; margin-bottom: 12px; padding: 8px 12px; background: #FEF2F2; border-radius: 6px;">
+                    ⚠️ La suma de boletos supera la capacidad del lugar.
+                </div>
+
+                <!-- General -->
+                <div class="ticket-subcard" style="margin-bottom: 16px;">
+                    <div class="subcard-header">
+                        <span class="subcard-title">🎫 General</span>
+                    </div>
+                    <div class="form-grid-2col">
+                        <div class="form-group">
+                            <label>Cantidad</label>
+                            <input type="number" name="cantidadGeneral" id="cantidadGeneral"
+                                   min="0" onchange="validarCapacidad()"
+                                   th:value="${boletoGeneral != null} ? ${boletoGeneral.capacidadMax} : 0">
+                        </div>
+                        <div class="form-group">
+                            <label>Precio (MXN)</label>
+                            <input type="number" name="precioGeneral" min="0" step="0.01" required
+                                   th:value="${boletoGeneral != null} ? ${boletoGeneral.precio} : 0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preferente -->
+                <div class="ticket-subcard" style="margin-bottom: 16px;">
+                    <div class="subcard-header">
+                        <span class="subcard-title">⭐ Preferente</span>
+                    </div>
+                    <div class="form-grid-2col">
+                        <div class="form-group">
+                            <label>Cantidad</label>
+                            <input type="number" name="cantidadPreferente" id="cantidadPreferente"
+                                   min="0" onchange="validarCapacidad()"
+                                   th:value="${boletoPreferente != null} ? ${boletoPreferente.capacidadMax} : 0">
+                        </div>
+                        <div class="form-group">
+                            <label>Precio (MXN)</label>
+                            <input type="number" name="precioPreferente" min="0" step="0.01" required
+                                   th:value="${boletoPreferente != null} ? ${boletoPreferente.precio} : 0">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIP -->
+                <div class="ticket-subcard" style="margin-bottom: 24px;">
+                    <div class="subcard-header">
+                        <span class="subcard-title">💎 VIP</span>
+                    </div>
+                    <div class="form-grid-2col">
+                        <div class="form-group">
+                            <label>Cantidad</label>
+                            <input type="number" name="cantidadVip" id="cantidadVip"
+                                   min="0" onchange="validarCapacidad()"
+                                   th:value="${boletoVip != null} ? ${boletoVip.capacidadMax} : 0">
+                        </div>
+                        <div class="form-group">
+                            <label>Precio (MXN)</label>
+                            <input type="number" name="precioVip" min="0" step="0.01" required
+                                   th:value="${boletoVip != null} ? ${boletoVip.precio} : 0">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group" style="background-color: rgba(0,0,0,0.02); padding: 20px; border-radius: 8px; border: 1px dashed var(--border-color);">
                     <label for="imagen" class="form-label" style="color: var(--color-font-n3);">
                         📸 Imagen del Evento
                     </label>
+                    <img th:if="${evento != null and evento.imagenUrl != null}" th:src="${evento.imagenUrl}"
+                         style="max-width: 150px; display: block; margin-bottom: 10px; border-radius: 6px;">
                     <input type="file" id="imagen" name="imagen" accept="image/*">
                     <p style="font-size: 0.8rem; color: var(--color-neutro); margin-top: 10px; margin-bottom: 0;">
-                        Formatos permitidos: JPG, PNG. Opcional.
+                        Formatos permitidos: JPG, PNG. <span th:text="${evento != null} ? 'Deja vacío para conservar la imagen actual.' : 'Opcional.'"></span>
                     </p>
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn-submit">Crear Evento</button>
+                    <button type="submit" class="btn-submit" id="btnSubmit"
+                            th:text="${evento != null} ? 'Guardar Cambios' : 'Crear Evento'">Crear Evento</button>
                 </div>
             </form>
         </div>
     </main>
 </div>
+
+<script>
+    function actualizarCapacidadMaxima() {
+        const select = document.getElementById('lugarId');
+        const opcionSeleccionada = select.options[select.selectedIndex];
+        const capacidad = parseInt(opcionSeleccionada.dataset.capacidad) || 0;
+
+        const small = document.getElementById('capacidadLugar');
+        if (capacidad > 0) {
+            small.textContent = `Capacidad máxima del lugar: ${capacidad} personas`;
+        } else {
+            small.textContent = '';
+        }
+
+        validarCapacidad();
+    }
+
+    function validarCapacidad() {
+        const select = document.getElementById('lugarId');
+        const opcionSeleccionada = select.options[select.selectedIndex];
+        const capacidadLugar = parseInt(opcionSeleccionada.dataset.capacidad) || 0;
+
+        const general = parseInt(document.getElementById('cantidadGeneral').value) || 0;
+        const preferente = parseInt(document.getElementById('cantidadPreferente').value) || 0;
+        const vip = parseInt(document.getElementById('cantidadVip').value) || 0;
+        const total = general + preferente + vip;
+
+        document.getElementById('capacidadTotal').value = total;
+
+        const error = document.getElementById('errorBoletos');
+        const btn = document.getElementById('btnSubmit');
+
+        if (capacidadLugar > 0 && total > capacidadLugar) {
+            error.style.display = 'block';
+            btn.disabled = true;
+            btn.style.opacity = '0.5';
+        } else {
+            error.style.display = 'none';
+            btn.disabled = false;
+            btn.style.opacity = '1';
+        }
+    }
+
+    document.getElementById('formEvento').addEventListener('submit', function(e) {
+        const select = document.getElementById('lugarId');
+        const capacidadLugar = parseInt(select.options[select.selectedIndex].dataset.capacidad) || 0;
+        const total = parseInt(document.getElementById('capacidadTotal').value) || 0;
+
+        if (capacidadLugar > 0 && total > capacidadLugar) {
+            e.preventDefault();
+            document.getElementById('errorBoletos').style.display = 'block';
+        }
+    });
+
+    window.addEventListener('DOMContentLoaded', actualizarCapacidadMaxima);
+</script>
 
 </body>
 </html>

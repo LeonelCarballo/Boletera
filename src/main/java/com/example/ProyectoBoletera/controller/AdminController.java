@@ -1,6 +1,8 @@
 package com.example.ProyectoBoletera.controller;
 
 import com.example.ProyectoBoletera.dominio.enums.CategoriaEvento;
+import com.example.ProyectoBoletera.dominio.model.Boleto;
+import com.example.ProyectoBoletera.dominio.model.Evento;
 import com.example.ProyectoBoletera.dominio.model.Lugar;
 import com.example.ProyectoBoletera.services.EventoService;
 import com.example.ProyectoBoletera.services.LugarService;
@@ -15,6 +17,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
 public class AdminController {
@@ -46,12 +52,6 @@ public class AdminController {
         return "admin/eventos/listar";
     }
 
-    @PostMapping("/admin/eventos/{id}/eliminar")
-    public String eliminarEvento(@PathVariable Long id) {
-        eventoService.eliminarEvento(id);
-        return "redirect:/admin/eventos";
-    }
-
     @GetMapping("/admin/eventos/nuevo")
     public String mostrarFormularioEvento(Model model) {
         model.addAttribute("lugares", lugarService.obtenerTodos());
@@ -66,12 +66,81 @@ public class AdminController {
                               @RequestParam CategoriaEvento categoria,
                               @RequestParam Long lugarId,
                               @RequestParam("imagen") MultipartFile imagen,
-                              Authentication authentication) {
+                              @RequestParam int cantidadGeneral,
+                              @RequestParam BigDecimal precioGeneral,
+                              @RequestParam int cantidadPreferente,
+                              @RequestParam BigDecimal precioPreferente,
+                              @RequestParam int cantidadVip,
+                              @RequestParam BigDecimal precioVip,
+                              Authentication authentication,
+                              RedirectAttributes redirectAttributes) {
 
-        String correoAdmin = authentication.getName();
-        eventoService.crearEventoDesdeFormulario(nombre, descripcion, fecha, capacidadTotal,
-                categoria, lugarId, correoAdmin, imagen);
+        try {
+            String correoAdmin = authentication.getName();
+            eventoService.crearEventoDesdeFormulario(nombre, descripcion, fecha, capacidadTotal,
+                    categoria, lugarId, correoAdmin, imagen,
+                    cantidadGeneral, precioGeneral, cantidadPreferente, precioPreferente,
+                    cantidadVip, precioVip);
 
+            return "redirect:/admin/eventos";
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/eventos/nuevo";
+        }
+    }
+
+    @GetMapping("/admin/eventos/{id}/editar")
+    public String mostrarFormularioEditar(@PathVariable Long id, Model model) {
+        Evento evento = eventoService.obtenerPorId(id);
+        List<Boleto> boletos = eventoService.obtenerBoletosPorEvento(id);
+
+        model.addAttribute("evento", evento);
+        model.addAttribute("lugares", lugarService.obtenerTodos());
+        model.addAttribute("boletoGeneral", boletos.stream()
+                .filter(b -> "General".equals(b.getTipo())).findFirst().orElse(null));
+        model.addAttribute("boletoPreferente", boletos.stream()
+                .filter(b -> "Preferente".equals(b.getTipo())).findFirst().orElse(null));
+        model.addAttribute("boletoVip", boletos.stream()
+                .filter(b -> "VIP".equals(b.getTipo())).findFirst().orElse(null));
+
+        return "admin/eventos/formulario";
+    }
+
+    @PostMapping("/admin/eventos/{id}")
+    public String actualizarEvento(@PathVariable Long id,
+                                   @RequestParam String nombre,
+                                   @RequestParam String descripcion,
+                                   @RequestParam String fecha,
+                                   @RequestParam int capacidadTotal,
+                                   @RequestParam CategoriaEvento categoria,
+                                   @RequestParam Long lugarId,
+                                   @RequestParam(value = "imagen", required = false) MultipartFile imagen,
+                                   @RequestParam int cantidadGeneral,
+                                   @RequestParam BigDecimal precioGeneral,
+                                   @RequestParam int cantidadPreferente,
+                                   @RequestParam BigDecimal precioPreferente,
+                                   @RequestParam int cantidadVip,
+                                   @RequestParam BigDecimal precioVip,
+                                   RedirectAttributes redirectAttributes) {
+
+        try {
+            eventoService.actualizarEventoDesdeFormulario(id, nombre, descripcion, fecha, capacidadTotal,
+                    categoria, lugarId, imagen,
+                    cantidadGeneral, precioGeneral, cantidadPreferente, precioPreferente,
+                    cantidadVip, precioVip);
+
+            return "redirect:/admin/eventos";
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/eventos/" + id + "/editar";
+        }
+    }
+
+    @PostMapping("/admin/eventos/{id}/eliminar")
+    public String eliminarEvento(@PathVariable Long id) {
+        eventoService.eliminarEvento(id);
         return "redirect:/admin/eventos";
     }
 
@@ -97,6 +166,42 @@ public class AdminController {
         Lugar lugar = new Lugar(nombre, direccion, ciudad, estado, capacidad);
         lugarService.crearLugar(lugar);
 
+        return "redirect:/admin/lugares";
+    }
+
+    @GetMapping("/admin/lugares/{id}/editar")
+    public String mostrarFormularioEditarLugar(@PathVariable Long id, Model model) {
+        model.addAttribute("lugar", lugarService.obtenerPorId(id));
+        return "admin/lugares/formulario";
+    }
+
+    @PostMapping("/admin/lugares/{id}")
+    public String actualizarLugar(@PathVariable Long id,
+                                  @RequestParam String nombre,
+                                  @RequestParam String direccion,
+                                  @RequestParam String ciudad,
+                                  @RequestParam String estado,
+                                  @RequestParam Integer capacidad,
+                                  RedirectAttributes redirectAttributes) {
+
+        try {
+            Lugar datosNuevos = new Lugar(nombre, direccion, ciudad, estado, capacidad);
+            lugarService.actualizarLugar(id, datosNuevos);
+            return "redirect:/admin/lugares";
+
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/lugares/" + id + "/editar";
+        }
+    }
+
+    @PostMapping("/admin/lugares/{id}/eliminar")
+    public String eliminarLugar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            lugarService.eliminarLugar(id);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
         return "redirect:/admin/lugares";
     }
 
