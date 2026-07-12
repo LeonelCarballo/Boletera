@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicketPlace - Iniciar Sesión</title>
+    <link rel="stylesheet" href="/styles/inicio-registro.css">
+</head>
+<body>
+
+<main class="auth-container">
+    <section class="auth-card">
+
+        <div class="form-header">
+            <h3>Inicia Sesión</h3>
+            <p class="form-subtitle">Bienvenido de nuevo, encuentra tu próxima experiencia.</p>
+        </div>
+
+        <form class="auth-form" id="login-form">
+
+            <div id="error-message" class="alert" style="color: #DC2626; margin-bottom: 16px; display: none;"></div>
+
+            <div class="form-group">
+                <label for="email">Correo Electrónico</label>
+                <div class="input-icon">
+                    <img src="/imgs/icon-correo.svg" alt="">
+                    <input type="email" id="email" name="email" placeholder="juanito@gmail.com" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="contrasenia">Contraseña</label>
+                <div class="input-icon">
+                    <img src="/imgs/icon-candado.svg" alt="">
+                    <input type="password" id="contrasenia" name="contrasenia" placeholder="*********" required>
+                    <button type="button" class="toggle-pw" data-target="contrasenia" aria-label="Mostrar contraseña">
+                        <img src="/imgs/icon-ojo.svg" alt="">
+                    </button>
+                </div>
+            </div>
+
+            <div class="form-group checkbox-group">
+                <input type="checkbox" id="recordar" name="recordar" value="si">
+                <label for="recordar">Mantener sesión iniciada</label>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" class="btn-primary">Iniciar Sesión</button>
+            </div>
+
+        </form>
+
+        <p class="link">¿No tienes una cuenta? <a href="crear-cuenta.html">Regístrate aquí</a></p>
+
+    </section>
+</main>
+
+<script type="module" src="../pages/login.js"></script>
+<script>
+    document.querySelectorAll('.toggle-pw').forEach(function (boton) {
+        boton.addEventListener('click', function () {
+            var input = document.getElementById(boton.dataset.target);
+            var icono = boton.querySelector('img');
+            var estabaOculta = input.type === 'password';
+            input.type = estabaOculta ? 'text' : 'password';
+            icono.src = estabaOculta ? '/imgs/icon-ojo-slash.svg' : '/imgs/icon-ojo.svg';
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TicketPlace - Explorar Eventos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/index.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">TicketPlace</a>
+    <nav class="main-nav" id="main-nav">
+      <a href="index.html" class="nav-link active">Inicio</a>
+      <a href="eventos.html" class="nav-link">Eventos</a>
+    </nav>
+    <div class="header-actions" id="header-actions">
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="catalogo-encabezado">
+    <p class="breadcrumb"><a href="index.html" style="color:inherit;text-decoration:none;">INICIO</a> <span>›</span> EXPLORAR EVENTOS</p>
+
+    <div class="catalogo-titulo-fila">
+      <div>
+        <h1 class="catalogo-titulo">Encuentra tu próximo <span class="hero-accent">momento.</span></h1>
+        <p class="catalogo-subtitulo">Experiencias exclusivas en las mejores ciudades de México.</p>
+      </div>
+
+      <button type="button" class="btn-ordenar" id="btn-ordenar">
+        <img src="/imgs/icon-ordenar.svg" alt="">
+        <span id="ordenar-label">Ordenar: Recomendados</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="catalogo-cuerpo">
+
+    <aside class="filtros">
+      <div class="filtros-header">
+        <h2>Filtros</h2>
+        <a href="eventos.html" class="filtros-limpiar">Limpiar</a>
+      </div>
+
+      <div class="filtro-grupo">
+        <label for="ubicacion">Ubicación</label>
+        <div class="input-icon">
+          <img src="/imgs/icon-ubicacion.svg" alt="">
+          <input type="text" id="ubicacion" name="ubicacion" placeholder="Ciudad o recinto">
+        </div>
+      </div>
+
+      <div class="filtro-grupo">
+        <h3>Categoría</h3>
+        <div class="filtro-checkbox">
+          <input type="checkbox" id="cat-todos" name="categoria" value="todos" checked>
+          <label for="cat-todos">Todos</label>
+        </div>
+        <div class="filtro-checkbox">
+          <input type="checkbox" id="cat-musica" name="categoria" value="MUSICA">
+          <label for="cat-musica">Conciertos</label>
+        </div>
+        <div class="filtro-checkbox">
+          <input type="checkbox" id="cat-teatro" name="categoria" value="TEATRO">
+          <label for="cat-teatro">Teatro</label>
+        </div>
+        <div class="filtro-checkbox">
+          <input type="checkbox" id="cat-deportes" name="categoria" value="DEPORTES">
+          <label for="cat-deportes">Deportes</label>
+        </div>
+        <div class="filtro-checkbox">
+          <input type="checkbox" id="cat-festival" name="categoria" value="FESTIVAL">
+          <label for="cat-festival">Festivales</label>
+        </div>
+        <div class="filtro-checkbox">
+          <input type="checkbox" id="cat-familiar" name="categoria" value="FAMILIAR">
+          <label for="cat-familiar">Familiar</label>
+        </div>
+      </div>
+
+      <div class="filtro-grupo">
+        <div class="filtro-presupuesto-fila">
+          <h3>Presupuesto</h3>
+          <span class="filtro-presupuesto-valor" id="presupuesto-valor">MXN $5,000+</span>
+        </div>
+        <input type="range" id="presupuesto" name="presupuesto" min="0" max="5000" step="50" class="filtro-slider" value="5000">
+        <small style="color: var(--tp-text-muted); font-size: 11px;">Próximamente disponible</small>
+      </div>
+    </aside>
+
+    <div class="tarjetas-grid" id="eventos-container">
+      <p class="subtitle">Cargando eventos...</p>
+    </div>
+
+  </section>
+
+  <nav class="paginacion" id="paginacion" aria-label="Paginación de eventos"></nav>
+
+</main>
+
+<script type="module" src="../pages/eventos.js"></script>
+
+</body>
+</html>

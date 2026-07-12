@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TicketPlace - Crear Cuenta</title>
+  <link rel="stylesheet" href="/styles/inicio-registro.css">
+</head>
+<body>
+
+<main class="auth-container">
+  <section class="auth-card">
+
+    <div class="form-header">
+      <h3>Crea tu cuenta</h3>
+      <p class="form-subtitle">Regístrate para descubrir experiencias únicas.</p>
+    </div>
+
+    <form class="auth-form" id="register-form">
+
+      <div id="error-message" class="alert" style="color: #DC2626; margin-bottom: 16px; display: none;"></div>
+
+      <div class="form-group">
+        <label for="nombre">Nombre Completo</label>
+        <div class="input-icon">
+          <img src="/imgs/icon-usuario.svg" alt="">
+          <input type="text" id="nombre" name="nombre" placeholder="Juanito Perez" required minlength="3" maxlength="250">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Correo Electronico</label>
+        <div class="input-icon">
+          <img src="/imgs/icon-correo.svg" alt="">
+          <input type="email" id="email" name="email" placeholder="juanito@gmail.com" required>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="contrasenia">Contraseña</label>
+        <div class="input-icon">
+          <img src="/imgs/icon-candado.svg" alt="">
+          <input type="password" id="contrasenia" name="contrasenia" placeholder="*********" required>
+          <button type="button" class="toggle-pw" data-target="contrasenia" aria-label="Mostrar contraseña">
+            <img src="/imgs/icon-ojo.svg" alt="">
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmar_contrasenia">Confirma tu Contraseña</label>
+        <div class="input-icon">
+          <img src="/imgs/icon-candado.svg" alt="">
+          <input type="password" id="confirmar_contrasenia" name="confirmar_contrasenia" placeholder="*********" required>
+          <button type="button" class="toggle-pw" data-target="confirmar_contrasenia" aria-label="Mostrar contraseña">
+            <img src="/imgs/icon-ojo.svg" alt="">
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="telefono">Numero de Telefono</label>
+        <div class="input-icon">
+          <img src="/imgs/icon-telefono.svg" alt="">
+          <input type="text" id="telefono" name="telefono" placeholder="6441234567" required pattern="[0-9]{10}">
+        </div>
+      </div>
+
+      <div class="form-group checkbox-group">
+        <input type="checkbox" id="terminos" name="chk_terminos" value="aceptado" required>
+        <label for="terminos">Acepto los <a href="terminos.html">Términos</a> y la <a href="privacidad.html">Política de Privacidad</a></label>
+      </div>
+
+      <div class="form-group">
+        <button type="submit" class="btn-primary">Registrarme ahora</button>
+      </div>
+
+    </form>
+
+    <p class="link">¿Ya tienes una cuenta? <a href="login.html">Inicia sesión aquí</a></p>
+
+  </section>
+</main>
+
+<script type="module" src="../pages/register.js"></script>
+<script>
+  document.querySelectorAll('.toggle-pw').forEach(function(boton) {
+    boton.addEventListener('click', function() {
+      var input = document.getElementById(boton.dataset.target);
+      input.type = (input.type === 'password') ? 'text' : 'password';
+    });
+  });
+</script>
+
+</body>
+</html>
