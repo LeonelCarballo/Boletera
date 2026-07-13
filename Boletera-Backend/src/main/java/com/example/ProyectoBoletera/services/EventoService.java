@@ -276,5 +276,10 @@ public class EventoService {
         return eventoRepository.countByInactivoTrue();
     }
 
+    //Contar todos los eventos activos
+    public long contarActivos() {
+        return eventoRepository.countByInactivoFalse();
+    }
+
 
 }
