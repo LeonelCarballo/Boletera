@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TicketPlace - Encuentra boletos para tus eventos favoritos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/index.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">TicketPlace</a>
+    <nav class="main-nav" id="main-nav">
+      <a href="index.html" class="nav-link active">Inicio</a>
+      <a href="eventos.html" class="nav-link">Eventos</a>
+    </nav>
+    <div class="header-actions" id="header-actions">
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="hero">
+    <div class="hero-inner">
+      <h1 class="hero-title">
+        Encuentra boletos para tus<br>
+        <span class="hero-accent">eventos favoritos</span>
+      </h1>
+      <p class="hero-subtitle">Explora conciertos, deportes y teatro con la mejor experiencia de compra en México.</p>
+
+      <form class="search-bar" id="search-form">
+        <div class="search-field">
+          <label for="evento">Evento</label>
+          <input type="text" id="evento" name="evento" placeholder="¿Qué quieres ver?">
+        </div>
+        <div class="search-divider"></div>
+        <div class="search-field">
+          <label for="lugar">Lugar</label>
+          <input type="text" id="lugar" name="lugar" placeholder="CDMX, Monterrey...">
+        </div>
+        <div class="search-divider"></div>
+        <div class="search-field">
+          <label for="fecha">Fecha</label>
+          <input type="text" id="fecha" name="fecha" placeholder="Cualquier fecha">
+        </div>
+        <button type="submit" class="btn-buscar">
+          <img src="/imgs/icon-buscar.svg" alt="">
+          Buscar
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <section class="categorias">
+    <div class="categorias-inner">
+      <a href="eventos.html?categoria=MUSICA" class="categoria-item active">
+        <span class="categoria-icono"><img src="/imgs/icon-categoria-conciertos.svg" alt=""></span>
+        <span class="categoria-label">Conciertos</span>
+      </a>
+      <a href="eventos.html?categoria=DEPORTES" class="categoria-item">
+        <span class="categoria-icono"><img src="/imgs/icon-categoria-deportes.svg" alt=""></span>
+        <span class="categoria-label">Deportes</span>
+      </a>
+      <a href="eventos.html?categoria=TEATRO" class="categoria-item">
+        <span class="categoria-icono"><img src="/imgs/icon-categoria-teatro.svg" alt=""></span>
+        <span class="categoria-label">Teatro</span>
+      </a>
+      <a href="eventos.html?categoria=FESTIVAL" class="categoria-item">
+        <span class="categoria-icono"><img src="/imgs/icon-categoria-festivales.svg" alt=""></span>
+        <span class="categoria-label">Festivales</span>
+      </a>
+      <a href="eventos.html?categoria=FAMILIAR" class="categoria-item">
+        <span class="categoria-icono"><img src="/imgs/icon-categoria-familiar.svg" alt=""></span>
+        <span class="categoria-label">Familiar</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="destacados">
+    <div class="destacados-header">
+      <div>
+        <h2>Experiencias Destacadas</h2>
+        <p>Selección especial para ti esta semana.</p>
+      </div>
+      <a href="eventos.html" class="ver-todas">Ver todas →</a>
+    </div>
+
+    <div class="tarjetas-grid" id="eventos-container">
+      <p class="subtitle">Cargando eventos...</p>
+    </div>
+  </section>
+
+</main>
+
+<script type="module" src="../pages/index.js"></script>
+
+</body>
+</html>

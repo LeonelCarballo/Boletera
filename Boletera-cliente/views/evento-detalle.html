@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TicketPlace - Detalle del Evento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/index.css">
+  <link rel="stylesheet" href="/styles/evento-detalle.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">TicketPlace</a>
+    <nav class="main-nav" id="main-nav">
+      <a href="index.html" class="nav-link active">Inicio</a>
+      <a href="eventos.html" class="nav-link">Eventos</a>
+    </nav>
+    <div class="header-actions" id="header-actions">
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="detalle-estado" id="detalle-loading">
+    <p class="subtitle">Cargando evento...</p>
+  </section>
+
+  <section class="detalle-estado" id="detalle-error" style="display:none;">
+    <p class="subtitle" id="detalle-error-msg">No se pudo cargar el evento.</p>
+    <a href="eventos.html" class="btn-primary">Volver a eventos</a>
+  </section>
+
+  <div id="detalle-contenido" class="detalle-layout" style="display:none;">
+
+    <div class="detalle-principal">
+
+      <div class="detalle-imagen-wrap">
+        <span class="tarjeta-badge destacado" id="detalle-badge"></span>
+        <img id="detalle-imagen" src="" alt="">
+      </div>
+
+      <h1 class="detalle-titulo" id="detalle-nombre"></h1>
+
+      <div class="detalle-meta-row">
+        <span class="detalle-meta-item">
+          <svg viewBox="0 0 24 24" class="icono-inline-svg"><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="3" y1="9" x2="21" y2="9" stroke="currentColor" stroke-width="1.6"/><line x1="7" y1="3" x2="7" y2="7" stroke="currentColor" stroke-width="1.6"/><line x1="17" y1="3" x2="17" y2="7" stroke="currentColor" stroke-width="1.6"/></svg>
+          <span id="detalle-fecha"></span>
+        </span>
+        <span class="detalle-meta-item">
+          <svg viewBox="0 0 24 24" class="icono-inline-svg"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.6"/><line x1="12" y1="7" x2="12" y2="12" stroke="currentColor" stroke-width="1.6"/><line x1="12" y1="12" x2="15.5" y2="14" stroke="currentColor" stroke-width="1.6"/></svg>
+          <span id="detalle-hora"></span>
+        </span>
+        <span class="detalle-meta-item">
+          <img src="/imgs/icon-ubicacion.svg" alt="" class="icono-inline">
+          <span id="detalle-lugar-corto"></span>
+        </span>
+      </div>
+
+      <hr class="detalle-divisor">
+
+      <h2 class="detalle-subtitulo">Sobre el Evento</h2>
+      <div class="detalle-descripcion" id="detalle-descripcion"></div>
+
+      <div class="detalle-venue-card" id="detalle-venue-card">
+        <h3 id="detalle-venue-nombre"></h3>
+        <p id="detalle-venue-direccion"></p>
+      </div>
+
+    </div>
+
+    <aside class="detalle-sidebar">
+      <div class="boletos-panel">
+        <h2>Selecciona Boletos</h2>
+
+        <div id="boletos-container"></div>
+
+        <div class="boletos-total-row">
+          <span>Total Estimado</span>
+          <span id="boletos-total">$0.00</span>
+        </div>
+
+        <button type="button" class="btn-primary btn-reservar" id="btn-reservar" disabled>
+          Reservar Ahora →
+        </button>
+        <p class="boletos-nota" id="boletos-nota">Selecciona al menos un boleto</p>
+      </div>
+    </aside>
+
+  </div>
+
+</main>
+
+<script type="module" src="../pages/evento-detalle.js"></script>
+
+</body>
+</html>
+
