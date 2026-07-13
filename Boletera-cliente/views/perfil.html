@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TicketPlace - Mi Perfil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/index.css">
+  <link rel="stylesheet" href="/styles/perfil.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">TicketPlace</a>
+    <nav class="main-nav" id="main-nav">
+      <a href="index.html" class="nav-link">Inicio</a>
+      <a href="eventos.html" class="nav-link">Eventos</a>
+    </nav>
+    <div class="header-actions" id="header-actions">
+    </div>
+  </div>
+</header>
+
+<main>
+  <section class="catalogo-encabezado">
+    <p class="breadcrumb"><a href="index.html" style="color:inherit;text-decoration:none;">INICIO</a> <span>›</span> MI PERFIL</p>
+    <h1 class="catalogo-titulo">Mi <span class="hero-accent">perfil.</span></h1>
+    <p class="catalogo-subtitulo">Consulta y actualiza los datos de tu cuenta.</p>
+  </section>
+
+  <section class="perfil-cuerpo">
+
+    <article class="perfil-card">
+      <h2>Datos de la cuenta</h2>
+      <p class="perfil-descripcion">Tu correo es tu identificador de acceso y no puede cambiarse.</p>
+
+      <div id="perfil-alert" class="perfil-alert"></div>
+
+      <form class="perfil-form" id="perfil-form">
+        <div class="form-group">
+          <label for="perfil-email">Correo electrónico</label>
+          <input type="email" id="perfil-email" disabled>
+        </div>
+        <div class="form-group">
+          <label for="perfil-nombre">Nombre</label>
+          <input type="text" id="perfil-nombre" minlength="3" maxlength="250" required>
+        </div>
+        <div class="form-group">
+          <label for="perfil-telefono">Teléfono (10 dígitos)</label>
+          <input type="tel" id="perfil-telefono" pattern="[0-9]{10}" maxlength="10" placeholder="5512345678">
+        </div>
+        <button type="submit" class="btn-primary">Guardar cambios</button>
+      </form>
+    </article>
+
+    <article class="perfil-card">
+      <h2>Cambiar contraseña</h2>
+      <p class="perfil-descripcion">Necesitas tu contraseña actual para confirmar el cambio.</p>
+
+      <div id="password-alert" class="perfil-alert"></div>
+
+      <form class="perfil-form" id="password-form">
+        <div class="form-group">
+          <label for="pw-actual">Contraseña actual</label>
+          <input type="password" id="pw-actual" required autocomplete="current-password">
+        </div>
+        <div class="form-group">
+          <label for="pw-nueva">Nueva contraseña (mínimo 8 caracteres)</label>
+          <input type="password" id="pw-nueva" minlength="8" required autocomplete="new-password">
+        </div>
+        <div class="form-group">
+          <label for="pw-confirmar">Confirmar nueva contraseña</label>
+          <input type="password" id="pw-confirmar" minlength="8" required autocomplete="new-password">
+        </div>
+        <button type="submit" class="btn-primary">Cambiar contraseña</button>
+      </form>
+    </article>
+
+  </section>
+</main>
+
+<script type="module" src="../pages/perfil.js"></script>
+
+</body>
+</html>

@@ -14,7 +14,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 await AuthService.login(email, contrasenia);
-                window.location.href = 'index.html';
+                const redirect = new URLSearchParams(window.location.search).get('redirect');
+                window.location.href = redirect || 'index.html';
             } catch (error) {
                 errorBox.textContent = error.message;
                 errorBox.style.display = 'block';
