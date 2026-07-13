@@ -32,6 +32,11 @@
                         <div class="card-meta" th:text="${usuario.telefono}">Teléfono</div>
                         <div class="card-status-badge status-publicado"
                              th:text="${usuario.rol}">Rol</div>
+
+                        <div class="card-actions-footer">
+                            <!-- Boton para ir a la vista de editar usuario -->
+                            <a th:href="@{/admin/usuarios/{id}/editar(id=${usuario.id})}" class="btn-card-action color-edit">Editar</a>
+                        </div>
                     </div>
                 </article>
             </div>
