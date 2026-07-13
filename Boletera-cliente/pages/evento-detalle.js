@@ -2,8 +2,10 @@ import AuthService from "../services/AuthService.js";
 import EventoService from "../services/EventoService.js";
 import CompraService from "../services/CompraService.js";
 
-let cantidades = {};
+let cantidades = {};            // boletoId -> cantidad (boletos por cantidad)
+let asientosSeleccionados = {}; // boletoId -> Map(asientoId -> etiqueta)
 let boletosActuales = [];
+let mapaAsientos = [];          // bloques de asientos por boleto con zona
 
 document.addEventListener('DOMContentLoaded', async () => {
     renderHeader();
@@ -16,6 +18,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     try {
         const evento = await EventoService.getById(id);
+
+        if ((evento.boletos || []).some(b => b.zona)) {
+            mapaAsientos = await EventoService.getAsientos(id);
+        }
+
         renderEvento(evento);
     } catch (error) {
         mostrarError(error.message);
@@ -124,7 +131,11 @@ function renderVenue(lugar) {
 function renderBoletos(boletos) {
     boletosActuales = boletos;
     cantidades = {};
-    boletos.forEach(b => { cantidades[b.id] = 0; });
+    asientosSeleccionados = {};
+    boletos.forEach(b => {
+        cantidades[b.id] = 0;
+        asientosSeleccionados[b.id] = new Map();
+    });
 
     const container = document.getElementById('boletos-container');
 
@@ -137,43 +148,168 @@ function renderBoletos(boletos) {
     container.innerHTML = '';
 
     boletos.forEach(boleto => {
-        const agotado = (boleto.disponibles ?? 0) <= 0;
-        const esVip = (boleto.tipo || '').toLowerCase().includes('vip');
-
-        const card = document.createElement('div');
-        card.className = 'boleto-selector' + (agotado ? ' boleto-agotado' : '');
-        card.dataset.boletoId = boleto.id;
-
-        card.innerHTML = `
-            ${esVip ? '<span class="boleto-vip-badge">VIP</span>' : ''}
-            <div class="boleto-selector-top">
-                <div class="boleto-selector-info">
-                    <span class="boleto-tipo">${boleto.tipo}</span>
-                    <span class="boleto-disponibilidad">${agotado ? 'Agotado' : `${boleto.disponibles} disponibles`}</span>
-                </div>
-                <span class="boleto-precio">$${formatearPrecio(boleto.precio)}</span>
-            </div>
-            <div class="boleto-selector-bottom">
-                <div class="boleto-stepper" ${agotado ? 'style="visibility:hidden;"' : ''}>
-                    <button type="button" class="stepper-btn stepper-menos" data-accion="menos" aria-label="Quitar boleto">−</button>
-                    <span class="stepper-cantidad">0</span>
-                    <button type="button" class="stepper-btn stepper-mas" data-accion="mas" aria-label="Agregar boleto">+</button>
-                </div>
-                <span class="boleto-por-boleto">Por boleto</span>
-            </div>
-        `;
-
-        container.appendChild(card);
-
-        if (!agotado) {
-            const menosBtn = card.querySelector('.stepper-menos');
-            const masBtn = card.querySelector('.stepper-mas');
-            menosBtn.addEventListener('click', () => cambiarCantidad(boleto, -1, card));
-            masBtn.addEventListener('click', () => cambiarCantidad(boleto, 1, card));
+        if (boleto.zona) {
+            renderBoletoConAsientos(boleto, container);
+        } else {
+            renderBoletoPorCantidad(boleto, container);
         }
     });
 
     actualizarTotal();
+}
+
+// Boleto clásico: se elige la cantidad con un stepper
+function renderBoletoPorCantidad(boleto, container) {
+    const agotado = (boleto.disponibles ?? 0) <= 0;
+    const esVip = (boleto.tipo || '').toLowerCase().includes('vip');
+
+    const card = document.createElement('div');
+    card.className = 'boleto-selector' + (agotado ? ' boleto-agotado' : '');
+    card.dataset.boletoId = boleto.id;
+
+    card.innerHTML = `
+        ${esVip ? '<span class="boleto-vip-badge">VIP</span>' : ''}
+        <div class="boleto-selector-top">
+            <div class="boleto-selector-info">
+                <span class="boleto-tipo">${boleto.tipo}</span>
+                <span class="boleto-disponibilidad">${agotado ? 'Agotado' : `${boleto.disponibles} disponibles`}</span>
+            </div>
+            <span class="boleto-precio">$${formatearPrecio(boleto.precio)}</span>
+        </div>
+        <div class="boleto-selector-bottom">
+            <div class="boleto-stepper" ${agotado ? 'style="visibility:hidden;"' : ''}>
+                <button type="button" class="stepper-btn stepper-menos" data-accion="menos" aria-label="Quitar boleto">−</button>
+                <span class="stepper-cantidad">0</span>
+                <button type="button" class="stepper-btn stepper-mas" data-accion="mas" aria-label="Agregar boleto">+</button>
+            </div>
+            <span class="boleto-por-boleto">Por boleto</span>
+        </div>
+    `;
+
+    container.appendChild(card);
+
+    if (!agotado) {
+        card.querySelector('.stepper-menos').addEventListener('click', () => cambiarCantidad(boleto, -1, card));
+        card.querySelector('.stepper-mas').addEventListener('click', () => cambiarCantidad(boleto, 1, card));
+    }
+}
+
+// Boleto con zona numerada: se eligen asientos en el mapa interactivo
+function renderBoletoConAsientos(boleto, container) {
+    const agotado = (boleto.disponibles ?? 0) <= 0;
+    const esVip = (boleto.tipo || '').toLowerCase().includes('vip');
+    const bloque = mapaAsientos.find(m => m.boletoId === boleto.id);
+
+    const card = document.createElement('div');
+    card.className = 'boleto-selector' + (agotado ? ' boleto-agotado' : '');
+    card.dataset.boletoId = boleto.id;
+
+    card.innerHTML = `
+        ${esVip ? '<span class="boleto-vip-badge">VIP</span>' : ''}
+        <div class="boleto-selector-top">
+            <div class="boleto-selector-info">
+                <span class="boleto-tipo">${boleto.tipo}</span>
+                <span class="boleto-disponibilidad">Zona ${boleto.zona.nombre} · ${agotado ? 'Agotado' : `${boleto.disponibles} disponibles`}</span>
+            </div>
+            <span class="boleto-precio">$${formatearPrecio(boleto.precio)}</span>
+        </div>
+        <div class="boleto-selector-bottom">
+            <button type="button" class="btn-elegir-asientos" ${agotado || !bloque ? 'disabled' : ''}>
+                Elegir asientos ▾
+            </button>
+            <span class="boleto-por-boleto">Por boleto</span>
+        </div>
+        <p class="boleto-asientos-resumen" id="resumen-${boleto.id}"></p>
+    `;
+
+    container.appendChild(card);
+
+    if (agotado || !bloque) return;
+
+    const mapa = construirMapa(boleto, bloque);
+    card.appendChild(mapa);
+
+    const btnElegir = card.querySelector('.btn-elegir-asientos');
+    btnElegir.addEventListener('click', () => {
+        mapa.hidden = !mapa.hidden;
+        btnElegir.textContent = mapa.hidden ? 'Elegir asientos ▾' : 'Ocultar asientos ▴';
+    });
+}
+
+// Construye la cuadrícula de asientos de una zona
+function construirMapa(boleto, bloque) {
+    const mapa = document.createElement('div');
+    mapa.className = 'mapa-asientos';
+    mapa.hidden = true;
+
+    const escenario = document.createElement('div');
+    escenario.className = 'mapa-escenario';
+    escenario.textContent = 'ESCENARIO';
+    mapa.appendChild(escenario);
+
+    const grid = document.createElement('div');
+    grid.className = 'mapa-grid';
+
+    // Agrupamos los asientos (ya vienen ordenados) por fila
+    const filas = new Map();
+    bloque.asientos.forEach(asiento => {
+        if (!filas.has(asiento.fila)) filas.set(asiento.fila, []);
+        filas.get(asiento.fila).push(asiento);
+    });
+
+    filas.forEach((asientos, letraFila) => {
+        const filaEl = document.createElement('div');
+        filaEl.className = 'mapa-fila';
+
+        const label = document.createElement('span');
+        label.className = 'mapa-fila-label';
+        label.textContent = letraFila;
+        filaEl.appendChild(label);
+
+        asientos.forEach(asiento => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'asiento' + (asiento.ocupado ? ' ocupado' : '');
+            btn.textContent = asiento.numero;
+            btn.disabled = asiento.ocupado;
+            btn.title = asiento.ocupado
+                ? `${asiento.fila}${asiento.numero} · Ocupado`
+                : `${asiento.fila}${asiento.numero} · Disponible`;
+
+            if (!asiento.ocupado) {
+                btn.addEventListener('click', () => {
+                    const seleccion = asientosSeleccionados[boleto.id];
+                    const etiqueta = `${asiento.fila}${asiento.numero}`;
+
+                    if (seleccion.has(asiento.id)) {
+                        seleccion.delete(asiento.id);
+                        btn.classList.remove('seleccionado');
+                    } else {
+                        seleccion.set(asiento.id, etiqueta);
+                        btn.classList.add('seleccionado');
+                    }
+
+                    actualizarTotal();
+                });
+            }
+
+            filaEl.appendChild(btn);
+        });
+
+        grid.appendChild(filaEl);
+    });
+
+    mapa.appendChild(grid);
+
+    mapa.insertAdjacentHTML('beforeend', `
+        <div class="mapa-leyenda">
+            <span><i class="leyenda-cuadro libre"></i> Libre</span>
+            <span><i class="leyenda-cuadro seleccionado"></i> Seleccionado</span>
+            <span><i class="leyenda-cuadro ocupado"></i> Ocupado</span>
+        </div>
+    `);
+
+    return mapa;
 }
 
 function cambiarCantidad(boleto, delta, card) {
@@ -192,9 +328,20 @@ function actualizarTotal() {
     let totalBoletos = 0;
 
     boletosActuales.forEach(b => {
-        const cant = cantidades[b.id] || 0;
+        const porCantidad = cantidades[b.id] || 0;
+        const porAsiento = asientosSeleccionados[b.id]?.size || 0;
+        const cant = porCantidad + porAsiento;
+
         total += cant * Number(b.precio);
         totalBoletos += cant;
+
+        // Resumen de asientos elegidos en la tarjeta del boleto
+        const resumen = document.getElementById(`resumen-${b.id}`);
+        if (resumen) {
+            resumen.textContent = porAsiento > 0
+                ? `Asientos: ${[...asientosSeleccionados[b.id].values()].join(', ')}`
+                : '';
+        }
     });
 
     document.getElementById('boletos-total').textContent = `$${formatearPrecio(total)}`;
@@ -217,9 +364,15 @@ async function reservarBoletos() {
         return;
     }
 
-    const items = boletosActuales
-        .filter(b => (cantidades[b.id] || 0) > 0)
-        .map(b => ({ boletoId: b.id, cantidad: cantidades[b.id] }));
+    const items = [];
+    boletosActuales.forEach(b => {
+        const seleccion = asientosSeleccionados[b.id];
+        if (b.zona && seleccion?.size > 0) {
+            items.push({ boletoId: b.id, cantidad: seleccion.size, asientos: [...seleccion.keys()] });
+        } else if ((cantidades[b.id] || 0) > 0) {
+            items.push({ boletoId: b.id, cantidad: cantidades[b.id] });
+        }
+    });
 
     if (!items.length) return;
 
@@ -234,6 +387,16 @@ async function reservarBoletos() {
             window.location.href = 'mis-tickets.html';
         }, 1200);
     } catch (error) {
+        // Refrescamos la disponibilidad: otro cliente pudo ganarnos un asiento
+        try {
+            const id = obtenerIdDesdeURL();
+            const evento = await EventoService.getById(id);
+            if ((evento.boletos || []).some(bo => bo.zona)) {
+                mapaAsientos = await EventoService.getAsientos(id);
+            }
+            renderBoletos(evento.boletos || []);
+        } catch (_) { /* si el refresco falla, conservamos la vista actual */ }
+
         nota.textContent = error.message;
         btn.disabled = false;
     }
