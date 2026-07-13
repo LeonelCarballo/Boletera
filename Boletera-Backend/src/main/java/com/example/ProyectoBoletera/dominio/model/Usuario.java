@@ -39,11 +39,14 @@ public abstract class Usuario {
     @Enumerated(EnumType.STRING)
     private RolUsuario rol;
 
+    private boolean activo;
+
     public Usuario(String nombre, String email, String contrasenia, String telefono, RolUsuario rol) {
         this.nombre = nombre;
         this.email = email;
         this.contrasenia = contrasenia;
         this.telefono = telefono;
         this.rol = rol;
+        this.activo = true;
     }
 }

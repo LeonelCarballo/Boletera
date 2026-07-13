@@ -34,8 +34,17 @@
                              th:text="${usuario.rol}">Rol</div>
 
                         <div class="card-actions-footer">
-                            <!-- Boton para ir a la vista de editar usuario -->
+                            
                             <a th:href="@{/admin/usuarios/{id}/editar(id=${usuario.id})}" class="btn-card-action color-edit">Editar</a>
+
+                            <form th:action="@{/admin/usuarios/{id}/alternar-estado(id=${usuario.id})}" method="post" style="display:inline">
+                                <button type="submit"
+                                        th:class="${usuario.activo} ? 'btn-card-action color-delete' : 'btn-card-action color-activate'"
+                                        th:text="${usuario.activo} ? 'Suspender' : 'Activar'"
+                                        style="background: transparent; cursor: pointer;">
+                                    Suspender
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </article>

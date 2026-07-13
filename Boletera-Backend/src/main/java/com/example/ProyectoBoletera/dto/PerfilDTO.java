@@ -5,6 +5,7 @@ public class PerfilDTO {
     private String email;
     private String telefono;
     private String rol;
+    private boolean activo;
 
     public PerfilDTO(String nombre, String email, String telefono, String rol) {
         this.nombre = nombre;
@@ -17,4 +18,8 @@ public class PerfilDTO {
     public String getEmail() { return email; }
     public String getTelefono() { return telefono; }
     public String getRol() { return rol; }
+
+    public boolean isActivo() {
+        return activo;
+    }
 }

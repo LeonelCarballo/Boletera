@@ -6,6 +6,7 @@ import com.example.ProyectoBoletera.exception.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
@@ -40,7 +41,7 @@ public class UsuarioService {
 
 
     /**
-     * Actualiza un usuario desde el formulario del panel admin.
+     * Actualiza un usuario desde el formulario del panel admin
      */
     public void actualizarUsuarioDesdeFormulario(Long id, String nombre, String email, String contrasenia, String telefono) {
         // Validar que el usuario exista
@@ -104,6 +105,22 @@ public class UsuarioService {
         }
 
         usuario.setContrasenia(passwordEncoder.encode(contraseniaNueva));
+        usuarioRepository.save(usuario);
+    }
+
+
+    /**
+     * Metodo para alterar el estado de la cuenta de un usuario (ACTIVO/INACTIVO)
+     * @param id
+     */
+    @Transactional
+    public void alternarEstadoActivo(Long id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario con id " + id));
+
+        // Si esta activo, pasa a ser inactivo o al reves
+        usuario.setActivo(!usuario.isActivo());
+
         usuarioRepository.save(usuario);
     }
 }

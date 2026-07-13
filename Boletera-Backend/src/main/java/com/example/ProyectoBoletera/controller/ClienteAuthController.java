@@ -44,7 +44,8 @@ public class ClienteAuthController {
                 "token", token,
                 "nombre", usuario.getNombre(),
                 "email", usuario.getEmail(),
-                "rol", usuario.getRol().name()
+                "rol", usuario.getRol().name(),
+                "activo", usuario.isActivo()
         ));
     }
 

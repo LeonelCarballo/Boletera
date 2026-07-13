@@ -246,13 +246,9 @@ public class AdminController {
         }
     }
 
-    @PostMapping("/admin/usuarios/{id}/eliminar")
-    public String eliminarUsuario(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            usuarioService.eliminar(id);
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "No se pudo eliminar al usuario porque tiene dependencias activas.");
-        }
+    @PostMapping("/admin/usuarios/{id}/alternar-estado")
+    public String alternarEstadoUsuario(@PathVariable Long id) {
+        usuarioService.alternarEstadoActivo(id);
         return "redirect:/admin/usuarios";
     }
 }
