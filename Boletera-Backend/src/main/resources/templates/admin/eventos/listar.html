@@ -47,11 +47,24 @@
 
                     <div class="card-actions-footer">
                         <a th:href="@{/admin/eventos/{id}/editar(id=${evento.id})}" class="btn-card-action color-edit">Editar</a>
+
+                        <!-- Activar/desactivar evento -->
+                        <form th:action="@{/admin/eventos/{id}/alternar-estado(id=${evento.id})}" method="post" style="display:inline">
+                            <button type="submit"
+                                    th:class="${evento.inactivo} ? 'btn-card-action color-edit' : 'btn-card-action color-delete'"
+                                    th:text="${evento.inactivo} ? 'Activar' : 'Desactivar'"
+                                    style="border: 1px solid currentColor; background: transparent; cursor: pointer;">
+                                Desactivar
+                            </button>
+                        </form>
+
                         <form th:action="@{/admin/eventos/{id}/eliminar(id=${evento.id})}" method="post" style="display:inline">
                             <button type="submit" class="btn-card-action color-delete"
                                     onclick="return confirm('¿Eliminar este evento?')">Borrar</button>
                         </form>
                     </div>
+
+
                 </div>
             </article>
         </div>

@@ -44,7 +44,11 @@ async function cargarEventos() {
     const container = document.getElementById('eventos-container');
 
     try {
-        const eventos = await EventoService.getAll();
+        
+        const todosLosEventos = await EventoService.getAll();
+
+        //filtro para que muestre unicamente los eventos ACTIVOS
+        const eventos = todosLosEventos.filter(evento => !evento.inactivo);
 
         if (!eventos.length) {
             container.innerHTML = '<p class="subtitle">No hay eventos disponibles por el momento.</p>';

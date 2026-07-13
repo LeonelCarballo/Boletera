@@ -14,4 +14,5 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     List<Evento> findByEstado(EstadoEvento estado);
     List<Evento> findByCategoria(CategoriaEvento categoria);
     List<Evento> findByAdministradorId(Long administradorId);
+    List<Evento> findByInactivoFalse();
 }

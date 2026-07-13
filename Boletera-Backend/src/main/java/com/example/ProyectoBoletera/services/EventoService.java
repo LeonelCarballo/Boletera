@@ -17,6 +17,7 @@ import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
@@ -255,6 +256,18 @@ public class EventoService {
         if (datosParciales.getEstado() != null) evento.setEstado(datosParciales.getEstado());
 
         return eventoRepository.save(evento);
+    }
+
+    @Transactional
+    public void alternarEstadoInactivo(Long id) {
+        // Busca el evento
+        Evento evento = eventoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("No se encontró el evento con id " + id));
+
+        // Se invirte el estado. Si era false se vuelve true, si era true se vuelve false
+        evento.setInactivo(!evento.isInactivo());
+
+        eventoRepository.save(evento);
     }
 
 

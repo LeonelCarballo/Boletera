@@ -144,6 +144,12 @@ public class AdminController {
         return "redirect:/admin/eventos";
     }
 
+    @PostMapping("/admin/eventos/{id}/alternar-estado")
+    public String alternarEstadoEvento(@PathVariable Long id) {
+        eventoService.alternarEstadoInactivo(id);
+        return "redirect:/admin/eventos";
+    }
+
     @GetMapping("/admin/lugares")
     public String lugares(Model model) {
         model.addAttribute("lugares", lugarService.obtenerTodos());
@@ -229,8 +235,6 @@ public class AdminController {
                                     @RequestParam String telefono,
                                     RedirectAttributes redirectAttributes) {
         try {
-            // Aquí mandas los datos limpios a tu servicio para que se encargue de la actualización
-            // Nota: En tu servicio tendrás que verificar si 'contrasenia' viene vacío para no pisar la anterior.
             usuarioService.actualizarUsuarioDesdeFormulario(id, nombre, email, contrasenia, telefono);
 
             return "redirect:/admin/usuarios";

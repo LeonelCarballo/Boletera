@@ -113,6 +113,11 @@ function aplicarFiltros() {
     ).map(c => c.value);
 
     let filtrados = todosLosEventos.filter(evento => {
+
+        if (evento.inactivo) {
+            return false;
+        }
+        
         const coincideUbicacion = !textoUbicacion ||
             (evento.lugar?.ciudad?.toLowerCase().includes(textoUbicacion)) ||
             (evento.lugar?.nombre?.toLowerCase().includes(textoUbicacion));
