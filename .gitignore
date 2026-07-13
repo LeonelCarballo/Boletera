@@ -2,3 +2,6 @@
 .idea/
 *.iml
 .vscode/
+
+# Configuración de Spring Boot (Credenciales/Secretos)
+src/main/resources/application.properties

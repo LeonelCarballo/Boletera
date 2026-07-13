@@ -211,4 +211,42 @@ public class AdminController {
         model.addAttribute("currentPage", "usuarios");
         return "admin/usuarios/listar";
     }
+
+    //Gestion de Usuarios desde el Panel Admin
+
+    @GetMapping("/admin/usuarios/{id}/editar")
+    public String mostrarFormularioEditarUsuario(@PathVariable Long id, Model model) {
+        // Buscamos el usuario por ID y lo mandamos al formulario
+        model.addAttribute("usuario", usuarioService.obtenerPorId(id));
+        return "admin/usuarios/formulario";
+    }
+
+    @PostMapping("/admin/usuarios/{id}")
+    public String actualizarUsuario(@PathVariable Long id,
+                                    @RequestParam String nombre,
+                                    @RequestParam String email,
+                                    @RequestParam(required = false) String contrasenia,
+                                    @RequestParam String telefono,
+                                    RedirectAttributes redirectAttributes) {
+        try {
+            // Aquí mandas los datos limpios a tu servicio para que se encargue de la actualización
+            // Nota: En tu servicio tendrás que verificar si 'contrasenia' viene vacío para no pisar la anterior.
+            usuarioService.actualizarUsuarioDesdeFormulario(id, nombre, email, contrasenia, telefono);
+
+            return "redirect:/admin/usuarios";
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            return "redirect:/admin/usuarios/" + id + "/editar";
+        }
+    }
+
+    @PostMapping("/admin/usuarios/{id}/eliminar")
+    public String eliminarUsuario(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            usuarioService.eliminar(id);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "No se pudo eliminar al usuario porque tiene dependencias activas.");
+        }
+        return "redirect:/admin/usuarios";
+    }
 }
