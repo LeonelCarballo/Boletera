@@ -62,7 +62,10 @@ public class SecurityConfig {
                         // Catálogo público: solo lectura
                         .requestMatchers(HttpMethod.GET, "/api/eventos/**", "/api/lugares/**").permitAll()
 
-                        // Compras: solo clientes autenticados con JWT
+                        // Perfil propio
+                        .requestMatchers("/api/me/**").authenticated()
+
+                        // Compras autenticados con jwt
                         .requestMatchers("/api/compras/**").hasRole("CLIENTE")
 
                         // Panel de administración (sesión + form login)
@@ -73,7 +76,7 @@ public class SecurityConfig {
                         // clientes y administradores): solo admin
                         .requestMatchers("/api/**").hasRole("ADMIN")
 
-                        // Todo lo que no esté listado arriba queda denegado
+                        // lo que no esté listado arriba queda denegado
                         .anyRequest().denyAll()
                 )
                 .exceptionHandling(exceptions -> exceptions
