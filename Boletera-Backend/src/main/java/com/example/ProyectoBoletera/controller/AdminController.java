@@ -38,6 +38,7 @@ public class AdminController {
     public String dashboard(Model model, HttpSession session) {
         model.addAttribute("totalUsuarios", usuarioService.contarTodos());
         model.addAttribute("totalEventos", eventoService.contarTodos());
+        model.addAttribute("totalEventosInactivos", eventoService.contarInactivos());
         model.addAttribute("totalLugares", lugarService.contarTodos());
         model.addAttribute("currentPage", "dashboard");
         model.addAttribute("nombreUsuario", session.getAttribute("usuario_nombre"));
