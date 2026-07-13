@@ -25,6 +25,18 @@ class EventoService {
 
         return data;
     }
+
+    static async getAsientos(id) {
+        const response = await fetch(`${BASE_URL}/eventos/${id}/asientos`);
+        const data = await response.json();
+
+        if (!response.ok) {
+            const error = data.error || 'No se pudo obtener el mapa de asientos';
+            throw new Error(error);
+        }
+
+        return data;
+    }
 }
 
 export default EventoService;

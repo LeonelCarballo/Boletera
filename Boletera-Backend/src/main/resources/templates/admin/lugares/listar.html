@@ -44,6 +44,7 @@
 
                     <div class="card-actions-footer">
                         <a th:href="@{/admin/lugares/{id}/editar(id=${lugar.id})}" class="btn-card-action color-edit">Editar</a>
+                        <a th:href="@{/admin/lugares/{id}/zonas(id=${lugar.id})}" class="btn-card-action color-edit">Zonas</a>
                         <form th:action="@{/admin/lugares/{id}/eliminar(id=${lugar.id})}" method="post" style="display:inline">
                             <button type="submit" class="btn-card-action color-delete"
                                     onclick="return confirm('¿Eliminar este lugar?')">Borrar</button>

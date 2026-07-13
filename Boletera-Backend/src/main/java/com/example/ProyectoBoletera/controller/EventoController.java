@@ -2,6 +2,7 @@ package com.example.ProyectoBoletera.controller;
 
 
 import com.example.ProyectoBoletera.dominio.model.Evento;
+import com.example.ProyectoBoletera.dto.ZonaAsientosDTO;
 import com.example.ProyectoBoletera.services.EventoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,12 @@ public class EventoController {
     @GetMapping("/{id}")
     public Evento obtenerPorId(@PathVariable Long id) {
         return eventoService.obtenerPorId(id);
+    }
+
+    // Mapa de asientos por tipo de boleto
+    @GetMapping("/{id}/asientos")
+    public List<ZonaAsientosDTO> obtenerAsientos(@PathVariable Long id) {
+        return eventoService.obtenerMapaAsientos(id);
     }
 
     @PostMapping

@@ -264,6 +264,147 @@
   margin: 10px 0 0;
 }
 
+/* ===== MAPA DE ASIENTOS ===== */
+.btn-elegir-asientos {
+  border: 1px solid var(--tp-magenta);
+  background: transparent;
+  color: var(--tp-magenta);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--tp-radius-full);
+  cursor: pointer;
+}
+
+.btn-elegir-asientos:hover:not(:disabled) {
+  background: var(--tp-magenta);
+  color: #fff;
+}
+
+.btn-elegir-asientos:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.boleto-asientos-resumen {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--tp-magenta);
+  margin: 8px 0 0;
+}
+
+.boleto-asientos-resumen:empty {
+  display: none;
+}
+
+.mapa-asientos {
+  margin-top: 12px;
+  border-top: 1px dashed var(--tp-border);
+  padding-top: 12px;
+}
+
+.mapa-escenario {
+  background: var(--tp-text-dark);
+  color: #fff;
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  padding: 4px;
+  border-radius: var(--tp-radius-full);
+  margin-bottom: 12px;
+}
+
+.mapa-grid {
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.mapa-fila {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.mapa-fila-label {
+  width: 16px;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--tp-text-muted);
+  text-align: center;
+}
+
+.asiento {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border: 1px solid var(--tp-border);
+  border-radius: 6px 6px 3px 3px;
+  background: #fff;
+  color: var(--tp-text-muted);
+  font-size: 9px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.asiento:hover:not(:disabled):not(.seleccionado) {
+  border-color: var(--tp-magenta);
+  color: var(--tp-magenta);
+}
+
+.asiento.seleccionado {
+  background: var(--tp-magenta);
+  border-color: var(--tp-magenta);
+  color: #fff;
+}
+
+.asiento.ocupado {
+  background: #E5E5E5;
+  border-color: #E5E5E5;
+  color: #AAAAAA;
+  cursor: not-allowed;
+  text-decoration: line-through;
+}
+
+.mapa-leyenda {
+  display: flex;
+  gap: 14px;
+  margin-top: 10px;
+  font-size: 10px;
+  color: var(--tp-text-muted);
+}
+
+.mapa-leyenda span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.leyenda-cuadro {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.leyenda-cuadro.libre {
+  border: 1px solid var(--tp-border);
+  background: #fff;
+}
+
+.leyenda-cuadro.seleccionado {
+  background: var(--tp-magenta);
+}
+
+.leyenda-cuadro.ocupado {
+  background: #E5E5E5;
+}
+
 /* ===== RESPONSIVE ===== */
 @media (max-width: 900px) {
   .detalle-layout {

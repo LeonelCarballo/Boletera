@@ -87,6 +87,7 @@ function renderTickets(tickets) {
                 <img src="/imgs/icon-ubicacion.svg" alt="" class="icono-inline">
                 ${ticket.eventoFecha ? formatearFecha(ticket.eventoFecha) : ''}${ticket.lugarNombre ? ` · ${ticket.lugarNombre}, ${ticket.lugarCiudad}` : ''}
             </p>
+            ${ticket.asiento ? `<p class="ticket-meta">Zona ${ticket.zonaNombre} · Asiento ${ticket.asiento}</p>` : ''}
             <div class="ticket-qr-wrap">
                 <canvas id="${canvasId}"></canvas>
             </div>

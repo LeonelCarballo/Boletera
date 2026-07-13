@@ -38,7 +38,12 @@ public class Boleto {
     @JsonIgnore
     private Evento evento;
 
+    @ManyToOne
+    @JoinColumn(name = "zona_id")
+    private Zona zona;
+
     @OneToMany(mappedBy = "boleto")
+    @JsonIgnore
     private List<BoletoCliente> boletosCliente;
 
 }

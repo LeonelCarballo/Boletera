@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ItemCompraDTO {
-    private Long boletoId;
-    private int cantidad;
-
-    private List<Long> asientos;
+public class AsientoDTO {
+    private Long id;
+    private String fila;
+    private int numero;
+    private boolean ocupado;
 }

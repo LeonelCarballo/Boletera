@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"boleto_id", "asiento_id"}))
 public class BoletoCliente {
 
     @Id
@@ -31,6 +32,10 @@ public class BoletoCliente {
     @JoinColumn(name = "boleto_id")
     @JsonIgnore
     private Boleto boleto;
+
+    @ManyToOne
+    @JoinColumn(name = "asiento_id")
+    private Asiento asiento;
 
     public BoletoCliente(String codigoQr, EstadoBoleto estado, Compra compra, Boleto boleto) {
         this.codigoQr = codigoQr;
