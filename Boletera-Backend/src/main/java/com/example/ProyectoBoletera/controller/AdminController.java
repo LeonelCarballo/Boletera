@@ -4,9 +4,11 @@ import com.example.ProyectoBoletera.dominio.enums.CategoriaEvento;
 import com.example.ProyectoBoletera.dominio.model.Boleto;
 import com.example.ProyectoBoletera.dominio.model.Evento;
 import com.example.ProyectoBoletera.dominio.model.Lugar;
+import com.example.ProyectoBoletera.dominio.model.Zona;
 import com.example.ProyectoBoletera.services.EventoService;
 import com.example.ProyectoBoletera.services.LugarService;
 import com.example.ProyectoBoletera.services.UsuarioService;
+import com.example.ProyectoBoletera.services.ZonaService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,7 +22,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class AdminController {
@@ -33,6 +37,9 @@ public class AdminController {
 
     @Autowired
     private LugarService lugarService;
+
+    @Autowired
+    private ZonaService zonaService;
 
     @GetMapping("/admin/dashboard")
     public String dashboard(Model model, HttpSession session) {
@@ -57,6 +64,7 @@ public class AdminController {
     @GetMapping("/admin/eventos/nuevo")
     public String mostrarFormularioEvento(Model model) {
         model.addAttribute("lugares", lugarService.obtenerTodos());
+        model.addAttribute("zonasData", zonasParaFormulario());
         return "admin/eventos/formulario";
     }
 
@@ -70,10 +78,13 @@ public class AdminController {
                               @RequestParam("imagen") MultipartFile imagen,
                               @RequestParam int cantidadGeneral,
                               @RequestParam BigDecimal precioGeneral,
+                              @RequestParam(required = false) Long zonaGeneralId,
                               @RequestParam int cantidadPreferente,
                               @RequestParam BigDecimal precioPreferente,
+                              @RequestParam(required = false) Long zonaPreferenteId,
                               @RequestParam int cantidadVip,
                               @RequestParam BigDecimal precioVip,
+                              @RequestParam(required = false) Long zonaVipId,
                               Authentication authentication,
                               RedirectAttributes redirectAttributes) {
 
@@ -81,8 +92,9 @@ public class AdminController {
             String correoAdmin = authentication.getName();
             eventoService.crearEventoDesdeFormulario(nombre, descripcion, fecha, capacidadTotal,
                     categoria, lugarId, correoAdmin, imagen,
-                    cantidadGeneral, precioGeneral, cantidadPreferente, precioPreferente,
-                    cantidadVip, precioVip);
+                    cantidadGeneral, precioGeneral, zonaGeneralId,
+                    cantidadPreferente, precioPreferente, zonaPreferenteId,
+                    cantidadVip, precioVip, zonaVipId);
 
             return "redirect:/admin/eventos";
 
@@ -99,6 +111,7 @@ public class AdminController {
 
         model.addAttribute("evento", evento);
         model.addAttribute("lugares", lugarService.obtenerTodos());
+        model.addAttribute("zonasData", zonasParaFormulario());
         model.addAttribute("boletoGeneral", boletos.stream()
                 .filter(b -> "General".equals(b.getTipo())).findFirst().orElse(null));
         model.addAttribute("boletoPreferente", boletos.stream()
@@ -107,6 +120,22 @@ public class AdminController {
                 .filter(b -> "VIP".equals(b.getTipo())).findFirst().orElse(null));
 
         return "admin/eventos/formulario";
+    }
+
+    // Zonas de todos los lugares en formato simple para el JS del formulario de eventos
+    private List<Map<String, Object>> zonasParaFormulario() {
+        return zonaService.obtenerTodas().stream()
+                .map(zona -> {
+                    Map<String, Object> datos = new HashMap<>();
+                    datos.put("id", zona.getId());
+                    datos.put("nombre", zona.getNombre());
+                    datos.put("lugarId", zona.getLugar().getId());
+                    datos.put("capacidad", zona.getCapacidad());
+                    datos.put("filas", zona.getFilas());
+                    datos.put("asientosPorFila", zona.getAsientosPorFila());
+                    return datos;
+                })
+                .toList();
     }
 
     @PostMapping("/admin/eventos/{id}")
@@ -120,17 +149,21 @@ public class AdminController {
                                    @RequestParam(value = "imagen", required = false) MultipartFile imagen,
                                    @RequestParam int cantidadGeneral,
                                    @RequestParam BigDecimal precioGeneral,
+                                   @RequestParam(required = false) Long zonaGeneralId,
                                    @RequestParam int cantidadPreferente,
                                    @RequestParam BigDecimal precioPreferente,
+                                   @RequestParam(required = false) Long zonaPreferenteId,
                                    @RequestParam int cantidadVip,
                                    @RequestParam BigDecimal precioVip,
+                                   @RequestParam(required = false) Long zonaVipId,
                                    RedirectAttributes redirectAttributes) {
 
         try {
             eventoService.actualizarEventoDesdeFormulario(id, nombre, descripcion, fecha, capacidadTotal,
                     categoria, lugarId, imagen,
-                    cantidadGeneral, precioGeneral, cantidadPreferente, precioPreferente,
-                    cantidadVip, precioVip);
+                    cantidadGeneral, precioGeneral, zonaGeneralId,
+                    cantidadPreferente, precioPreferente, zonaPreferenteId,
+                    cantidadVip, precioVip, zonaVipId);
 
             return "redirect:/admin/eventos";
 
@@ -211,6 +244,47 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("error", e.getMessage());
         }
         return "redirect:/admin/lugares";
+    }
+
+    // Gestión de zonas (asientos numerados) por lugar
+
+    @GetMapping("/admin/lugares/{id}/zonas")
+    public String zonasDeLugar(@PathVariable Long id, Model model) {
+        Lugar lugar = lugarService.obtenerPorId(id);
+        List<Zona> zonas = zonaService.obtenerPorLugar(id);
+        int capacidadEnZonas = zonas.stream().mapToInt(Zona::getCapacidad).sum();
+
+        model.addAttribute("lugar", lugar);
+        model.addAttribute("zonas", zonas);
+        model.addAttribute("capacidadEnZonas", capacidadEnZonas);
+        model.addAttribute("currentPage", "lugares");
+        return "admin/lugares/zonas";
+    }
+
+    @PostMapping("/admin/lugares/{id}/zonas")
+    public String crearZona(@PathVariable Long id,
+                            @RequestParam String nombre,
+                            @RequestParam int filas,
+                            @RequestParam int asientosPorFila,
+                            RedirectAttributes redirectAttributes) {
+        try {
+            zonaService.crearZona(id, nombre, filas, asientosPorFila);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/lugares/" + id + "/zonas";
+    }
+
+    @PostMapping("/admin/lugares/{id}/zonas/{zonaId}/eliminar")
+    public String eliminarZona(@PathVariable Long id,
+                               @PathVariable Long zonaId,
+                               RedirectAttributes redirectAttributes) {
+        try {
+            zonaService.eliminarZona(zonaId);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+        }
+        return "redirect:/admin/lugares/" + id + "/zonas";
     }
 
     @GetMapping("/admin/usuarios")

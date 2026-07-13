@@ -6,6 +6,7 @@ import com.example.ProyectoBoletera.dto.TicketDTO;
 import com.example.ProyectoBoletera.exception.ResourceNotFoundException;
 import com.example.ProyectoBoletera.services.CompraService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,6 +35,9 @@ public class CompraController {
             return ResponseEntity.ok(respuesta);
         } catch (IllegalArgumentException | ResourceNotFoundException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.badRequest().body(Map.of("error",
+                    "Alguien más acaba de comprar uno de los asientos que elegiste. Recarga la página e inténtalo de nuevo."));
         }
     }
 
