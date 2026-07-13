@@ -9,14 +9,19 @@ cloudinary.api_key=471766721845585
 
 cloudinary.api_secret=1ufu9-syFOQPO5kEXZuBbH2eqe0
 
-Esta sera la cuenta con la que se ingresara como administrador al levantar el proyecto boletera-backend.
 
 # Seguridad
+
+Esta sera la cuenta con la que se ingresara como administrador al levantar el proyecto boletera-backend:
+
 app.jwt.secret=jLCyF1BYw9Um738XMcsPlpJQoKfavTg52db6iHhxVkOR4tZIGWuzArnS0qeNED
 
 app.admin.email=admin@ticketplace.com  -- correo
 
 app.admin.password=Admin123!  -- contrasenia
+
+
+
 
 
 2.Abrir en VisualStudio el proyecto Boletera-cliente
