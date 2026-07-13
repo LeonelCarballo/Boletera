@@ -15,7 +15,7 @@ function renderHeader() {
         const user = AuthService.getUser();
 
         headerActions.innerHTML = `
-            <span class="link-entrar">Hola, ${user?.nombre || 'Usuario'}</span>
+            <a href="perfil.html" class="link-entrar">Hola, ${user?.nombre || 'Usuario'}</a>
             <button type="button" class="btn-primary" id="logout-btn">Cerrar sesión</button>
         `;
         document.getElementById('logout-btn').addEventListener('click', () => {

@@ -1,0 +1,93 @@
+/* Página de perfil — usa las variables de index.css (tema claro del sitio) */
+
+.perfil-cuerpo {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 0 24px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.perfil-card {
+  background: #fff;
+  border: 1px solid var(--tp-border);
+  border-radius: var(--tp-radius-lg);
+  padding: 28px;
+}
+
+.perfil-card h2 {
+  margin: 0 0 4px;
+  font-size: 1.15rem;
+  color: var(--tp-text-dark);
+}
+
+.perfil-card .perfil-descripcion {
+  margin: 0 0 20px;
+  font-size: 0.9rem;
+  color: var(--tp-text-muted);
+}
+
+.perfil-form .form-group {
+  margin-bottom: 16px;
+}
+
+.perfil-form label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--tp-text-dark);
+}
+
+.perfil-form input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--tp-border);
+  border-radius: var(--tp-radius-md);
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--tp-text-dark);
+}
+
+.perfil-form input:focus {
+  outline: 2px solid var(--tp-magenta);
+  outline-offset: -1px;
+}
+
+.perfil-form input[disabled] {
+  background: #f5f0f0;
+  color: var(--tp-text-muted);
+  cursor: not-allowed;
+}
+
+.perfil-form .btn-primary {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+
+.perfil-alert {
+  display: none;
+  padding: 10px 14px;
+  border-radius: var(--tp-radius-md);
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.perfil-alert-error {
+  background: #FDECEC;
+  color: #DC2626;
+}
+
+.perfil-alert-ok {
+  background: #EAF7EE;
+  color: #15803D;
+}
+
+@media (max-width: 520px) {
+  .perfil-card {
+    padding: 20px;
+  }
+}

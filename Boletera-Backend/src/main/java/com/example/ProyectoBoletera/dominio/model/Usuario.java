@@ -1,6 +1,7 @@
 package com.example.ProyectoBoletera.dominio.model;
 
 import com.example.ProyectoBoletera.dominio.enums.RolUsuario;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -27,7 +28,9 @@ public abstract class Usuario {
     @Column(unique = true)
     private String email;
 
+    // Acceso de solo escritura
     @NotBlank
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String contrasenia;
 
     @Size(min = 10, max = 10)
