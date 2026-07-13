@@ -7,11 +7,17 @@ import com.example.ProyectoBoletera.dominio.model.Boleto;
 import com.example.ProyectoBoletera.dominio.model.Evento;
 import com.example.ProyectoBoletera.dominio.model.Lugar;
 import com.example.ProyectoBoletera.dominio.model.Usuario;
+import com.example.ProyectoBoletera.dominio.model.Zona;
 import com.example.ProyectoBoletera.dominio.repository.AdministradorRepository;
+import com.example.ProyectoBoletera.dominio.repository.AsientoRepository;
+import com.example.ProyectoBoletera.dominio.repository.BoletoClienteRepository;
 import com.example.ProyectoBoletera.dominio.repository.BoletoRepository;
 import com.example.ProyectoBoletera.dominio.repository.EventoRepository;
 import com.example.ProyectoBoletera.dominio.repository.LugarRepository;
 import com.example.ProyectoBoletera.dominio.repository.UsuarioRepository;
+import com.example.ProyectoBoletera.dominio.repository.ZonaRepository;
+import com.example.ProyectoBoletera.dto.AsientoDTO;
+import com.example.ProyectoBoletera.dto.ZonaAsientosDTO;
 import com.example.ProyectoBoletera.exception.ResourceNotFoundException;
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
@@ -22,8 +28,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 @Service
 public class EventoService {
@@ -46,6 +56,15 @@ public class EventoService {
     @Autowired
     private BoletoRepository boletoRepository;
 
+    @Autowired
+    private ZonaRepository zonaRepository;
+
+    @Autowired
+    private AsientoRepository asientoRepository;
+
+    @Autowired
+    private BoletoClienteRepository boletoClienteRepository;
+
     public List<Evento> obtenerTodos() {
         return eventoRepository.findAll();
     }
@@ -66,9 +85,9 @@ public class EventoService {
     public Evento crearEventoDesdeFormulario(String nombre, String descripcion, String fecha,
                                              int capacidadTotal, CategoriaEvento categoria,
                                              Long lugarId, String correoAdmin, MultipartFile imagen,
-                                             int cantidadGeneral, BigDecimal precioGeneral,
-                                             int cantidadPreferente, BigDecimal precioPreferente,
-                                             int cantidadVip, BigDecimal precioVip) {
+                                             int cantidadGeneral, BigDecimal precioGeneral, Long zonaGeneralId,
+                                             int cantidadPreferente, BigDecimal precioPreferente, Long zonaPreferenteId,
+                                             int cantidadVip, BigDecimal precioVip, Long zonaVipId) {
 
         Usuario usuario = usuarioRepository.findByEmail(correoAdmin)
                 .orElseThrow(() -> new ResourceNotFoundException("Administrador no encontrado"));
@@ -79,6 +98,16 @@ public class EventoService {
 
         LocalDateTime fechaEvento = LocalDateTime.parse(fecha);
         validarFechaNoPasada(fechaEvento);
+
+        Zona zonaGeneral = resolverZona(zonaGeneralId, lugar);
+        Zona zonaPreferente = resolverZona(zonaPreferenteId, lugar);
+        Zona zonaVip = resolverZona(zonaVipId, lugar);
+        validarZonasDistintas(zonaGeneral, zonaPreferente, zonaVip);
+
+        // la cantidad la dicta la capacidad de la zona
+        if (zonaGeneral != null) cantidadGeneral = zonaGeneral.getCapacidad();
+        if (zonaPreferente != null) cantidadPreferente = zonaPreferente.getCapacidad();
+        if (zonaVip != null) cantidadVip = zonaVip.getCapacidad();
 
         int totalBoletos = cantidadGeneral + cantidadPreferente + cantidadVip;
         if (totalBoletos > lugar.getCapacidad()) {
@@ -102,14 +131,38 @@ public class EventoService {
 
         Evento eventoGuardado = eventoRepository.save(evento);
 
-        crearBoletoSiAplica("General", precioGeneral, cantidadGeneral, eventoGuardado);
-        crearBoletoSiAplica("Preferente", precioPreferente, cantidadPreferente, eventoGuardado);
-        crearBoletoSiAplica("VIP", precioVip, cantidadVip, eventoGuardado);
+        crearBoletoSiAplica("General", precioGeneral, cantidadGeneral, zonaGeneral, eventoGuardado);
+        crearBoletoSiAplica("Preferente", precioPreferente, cantidadPreferente, zonaPreferente, eventoGuardado);
+        crearBoletoSiAplica("VIP", precioVip, cantidadVip, zonaVip, eventoGuardado);
 
         return eventoGuardado;
     }
 
-    private void crearBoletoSiAplica(String tipo, BigDecimal precio, int cantidad, Evento evento) {
+    private Zona resolverZona(Long zonaId, Lugar lugar) {
+        if (zonaId == null) return null;
+
+        Zona zona = zonaRepository.findById(zonaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Zona no encontrada con id " + zonaId));
+
+        if (!zona.getLugar().getId().equals(lugar.getId())) {
+            throw new IllegalArgumentException("La zona '" + zona.getNombre() +
+                    "' no pertenece al lugar '" + lugar.getNombre() + "'.");
+        }
+
+        return zona;
+    }
+
+    private void validarZonasDistintas(Zona... zonas) {
+        Set<Long> vistas = new HashSet<>();
+        for (Zona zona : zonas) {
+            if (zona != null && !vistas.add(zona.getId())) {
+                throw new IllegalArgumentException("No puedes asignar la zona '" + zona.getNombre() +
+                        "' a dos tipos de boleto del mismo evento.");
+            }
+        }
+    }
+
+    private void crearBoletoSiAplica(String tipo, BigDecimal precio, int cantidad, Zona zona, Evento evento) {
         if (cantidad <= 0) return;
 
         Boleto boleto = new Boleto();
@@ -117,6 +170,7 @@ public class EventoService {
         boleto.setPrecio(precio);
         boleto.setCapacidadMax(cantidad);
         boleto.setDisponibles(cantidad);
+        boleto.setZona(zona);
         boleto.setEvento(evento);
 
         boletoRepository.save(boleto);
@@ -125,9 +179,9 @@ public class EventoService {
     public Evento actualizarEventoDesdeFormulario(Long id, String nombre, String descripcion, String fecha,
                                                   int capacidadTotal, CategoriaEvento categoria,
                                                   Long lugarId, MultipartFile imagen,
-                                                  int cantidadGeneral, BigDecimal precioGeneral,
-                                                  int cantidadPreferente, BigDecimal precioPreferente,
-                                                  int cantidadVip, BigDecimal precioVip) {
+                                                  int cantidadGeneral, BigDecimal precioGeneral, Long zonaGeneralId,
+                                                  int cantidadPreferente, BigDecimal precioPreferente, Long zonaPreferenteId,
+                                                  int cantidadVip, BigDecimal precioVip, Long zonaVipId) {
 
         Evento evento = obtenerPorId(id);
 
@@ -136,6 +190,15 @@ public class EventoService {
 
         LocalDateTime fechaEvento = LocalDateTime.parse(fecha);
         validarFechaNoPasada(fechaEvento);
+
+        Zona zonaGeneral = resolverZona(zonaGeneralId, lugar);
+        Zona zonaPreferente = resolverZona(zonaPreferenteId, lugar);
+        Zona zonaVip = resolverZona(zonaVipId, lugar);
+        validarZonasDistintas(zonaGeneral, zonaPreferente, zonaVip);
+
+        if (zonaGeneral != null) cantidadGeneral = zonaGeneral.getCapacidad();
+        if (zonaPreferente != null) cantidadPreferente = zonaPreferente.getCapacidad();
+        if (zonaVip != null) cantidadVip = zonaVip.getCapacidad();
 
         int totalBoletos = cantidadGeneral + cantidadPreferente + cantidadVip;
         if (totalBoletos > lugar.getCapacidad()) {
@@ -161,14 +224,14 @@ public class EventoService {
 
         Evento eventoActualizado = eventoRepository.save(evento);
 
-        actualizarOCrearBoleto("General", precioGeneral, cantidadGeneral, eventoActualizado);
-        actualizarOCrearBoleto("Preferente", precioPreferente, cantidadPreferente, eventoActualizado);
-        actualizarOCrearBoleto("VIP", precioVip, cantidadVip, eventoActualizado);
+        actualizarOCrearBoleto("General", precioGeneral, cantidadGeneral, zonaGeneral, eventoActualizado);
+        actualizarOCrearBoleto("Preferente", precioPreferente, cantidadPreferente, zonaPreferente, eventoActualizado);
+        actualizarOCrearBoleto("VIP", precioVip, cantidadVip, zonaVip, eventoActualizado);
 
         return eventoActualizado;
     }
 
-    private void actualizarOCrearBoleto(String tipo, BigDecimal precio, int cantidad, Evento evento) {
+    private void actualizarOCrearBoleto(String tipo, BigDecimal precio, int cantidad, Zona zona, Evento evento) {
         Boleto boletoExistente = boletoRepository.findByEventoId(evento.getId()).stream()
                 .filter(b -> b.getTipo().equals(tipo))
                 .findFirst()
@@ -183,11 +246,21 @@ public class EventoService {
 
         if (boletoExistente != null) {
             int vendidos = boletoExistente.getCapacidadMax() - boletoExistente.getDisponibles();
+
+            // Cambiar la zona invalidaría los asientos ya asignados
+            Long zonaActualId = boletoExistente.getZona() != null ? boletoExistente.getZona().getId() : null;
+            Long zonaNuevaId = zona != null ? zona.getId() : null;
+            if (vendidos > 0 && !Objects.equals(zonaActualId, zonaNuevaId)) {
+                throw new IllegalArgumentException("No puedes cambiar la zona de '" + tipo +
+                        "' porque ya hay " + vendidos + " boleto(s) vendido(s).");
+            }
+
             int nuevosDisponibles = cantidad - vendidos;
 
             boletoExistente.setPrecio(precio);
             boletoExistente.setCapacidadMax(cantidad);
             boletoExistente.setDisponibles(nuevosDisponibles);
+            boletoExistente.setZona(zona);
             boletoRepository.save(boletoExistente);
         } else {
             Boleto nuevo = new Boleto();
@@ -195,9 +268,37 @@ public class EventoService {
             nuevo.setPrecio(precio);
             nuevo.setCapacidadMax(cantidad);
             nuevo.setDisponibles(cantidad);
+            nuevo.setZona(zona);
             nuevo.setEvento(evento);
             boletoRepository.save(nuevo);
         }
+    }
+
+    /**
+     * Mapa de asientos del evento
+     */
+    public List<ZonaAsientosDTO> obtenerMapaAsientos(Long eventoId) {
+        obtenerPorId(eventoId);
+
+        List<ZonaAsientosDTO> mapa = new ArrayList<>();
+
+        for (Boleto boleto : boletoRepository.findByEventoId(eventoId)) {
+            Zona zona = boleto.getZona();
+            if (zona == null) continue;
+
+            Set<Long> ocupados = new HashSet<>(
+                    boletoClienteRepository.findAsientoIdsOcupadosPorBoleto(boleto.getId()));
+
+            List<AsientoDTO> asientos = asientoRepository
+                    .findByZonaIdOrderByFilaAscNumeroAsc(zona.getId()).stream()
+                    .map(a -> new AsientoDTO(a.getId(), a.getFila(), a.getNumero(), ocupados.contains(a.getId())))
+                    .toList();
+
+            mapa.add(new ZonaAsientosDTO(boleto.getId(), boleto.getTipo(), boleto.getPrecio(),
+                    zona.getId(), zona.getNombre(), zona.getFilas(), zona.getAsientosPorFila(), asientos));
+        }
+
+        return mapa;
     }
 
     public void eliminarEvento(Long id) {

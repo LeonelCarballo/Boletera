@@ -111,6 +111,13 @@
                                    th:value="${boletoGeneral != null} ? ${boletoGeneral.precio} : 0">
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label>Zona con asientos numerados</label>
+                        <select name="zonaGeneralId" class="zona-select" data-cantidad="cantidadGeneral"
+                                th:attr="data-selected=${boletoGeneral != null and boletoGeneral.zona != null ? boletoGeneral.zona.id : ''}">
+                            <option value="">Sin asientos numerados (venta por cantidad)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- Preferente -->
@@ -131,6 +138,13 @@
                                    th:value="${boletoPreferente != null} ? ${boletoPreferente.precio} : 0">
                         </div>
                     </div>
+                    <div class="form-group">
+                        <label>Zona con asientos numerados</label>
+                        <select name="zonaPreferenteId" class="zona-select" data-cantidad="cantidadPreferente"
+                                th:attr="data-selected=${boletoPreferente != null and boletoPreferente.zona != null ? boletoPreferente.zona.id : ''}">
+                            <option value="">Sin asientos numerados (venta por cantidad)</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- VIP -->
@@ -150,6 +164,13 @@
                             <input type="number" name="precioVip" min="0" step="0.01" required
                                    th:value="${boletoVip != null} ? ${boletoVip.precio} : 0">
                         </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Zona con asientos numerados</label>
+                        <select name="zonaVipId" class="zona-select" data-cantidad="cantidadVip"
+                                th:attr="data-selected=${boletoVip != null and boletoVip.zona != null ? boletoVip.zona.id : ''}">
+                            <option value="">Sin asientos numerados (venta por cantidad)</option>
+                        </select>
                     </div>
                 </div>
 
@@ -174,7 +195,11 @@
     </main>
 </div>
 
-<script>
+<script th:inline="javascript">
+    // Zonas de todos los lugares
+    // [{id, nombre, lugarId, capacidad, filas, asientosPorFila}]
+    const ZONAS = /*[[${zonasData}]]*/ [];
+
     function actualizarCapacidadMaxima() {
         const select = document.getElementById('lugarId');
         const opcionSeleccionada = select.options[select.selectedIndex];
@@ -187,8 +212,58 @@
             small.textContent = '';
         }
 
+        poblarZonas();
         validarCapacidad();
     }
+
+    // Rellena los selects de zona con las zonas del lugar elegido
+    function poblarZonas() {
+        const lugarId = parseInt(document.getElementById('lugarId').value) || 0;
+
+        document.querySelectorAll('.zona-select').forEach(sel => {
+            // La primera vez respeta la zona guardada (modo edición)
+            const seleccionada = sel.dataset.selected || '';
+            sel.dataset.selected = '';
+
+            sel.innerHTML = '<option value="">Sin asientos numerados (venta por cantidad)</option>';
+
+            ZONAS.filter(z => z.lugarId === lugarId).forEach(z => {
+                const opt = document.createElement('option');
+                opt.value = z.id;
+                opt.textContent = `${z.nombre} (${z.filas} filas × ${z.asientosPorFila} = ${z.capacidad} asientos)`;
+                sel.appendChild(opt);
+            });
+
+            if (seleccionada && sel.querySelector(`option[value="${seleccionada}"]`)) {
+                sel.value = seleccionada;
+            }
+
+            aplicarZona(sel);
+        });
+    }
+
+    // Con zona elegida
+    function aplicarZona(sel) {
+        const cantidadInput = document.getElementById(sel.dataset.cantidad);
+        const zona = ZONAS.find(z => z.id === parseInt(sel.value));
+
+        if (zona) {
+            cantidadInput.value = zona.capacidad;
+            cantidadInput.readOnly = true;
+            cantidadInput.style.backgroundColor = 'rgba(0,0,0,0.04)';
+            cantidadInput.style.cursor = 'not-allowed';
+        } else {
+            cantidadInput.readOnly = false;
+            cantidadInput.style.backgroundColor = '';
+            cantidadInput.style.cursor = '';
+        }
+
+        validarCapacidad();
+    }
+
+    document.querySelectorAll('.zona-select').forEach(sel => {
+        sel.addEventListener('change', () => aplicarZona(sel));
+    });
 
     function validarCapacidad() {
         const select = document.getElementById('lugarId');

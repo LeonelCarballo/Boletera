@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{admin/fragments/layout :: head('Zonas')}"></head>
+<body class="dashboard-layout">
+
+<div th:replace="~{admin/fragments/layout :: sidebar}"></div>
+
+<div class="main-wrapper">
+    <header class="dashboard-header">
+        <span class="header-logo-mobile">TicketPlace</span>
+    </header>
+
+    <main class="dashboard-content">
+        <div class="content-heading">
+            <div class="heading-text">
+                <h1 th:text="'Zonas de ' + ${lugar.nombre}">Zonas</h1>
+                <p class="subtitle">
+                    Asientos numerados por zona.
+                    <span th:text="${capacidadEnZonas} + ' de ' + ${lugar.capacidad} + ' lugares repartidos en zonas.'"></span>
+                </p>
+            </div>
+            <a th:href="@{/admin/lugares}" class="btn-primary-action">← Volver a lugares</a>
+        </div>
+
+        <div th:if="${error}"
+             style="color: #DC2626; background: #FEF2F2; padding: 12px 16px; border-radius: 6px; margin-bottom: 16px;">
+            ⚠️ <span th:text="${error}"></span>
+        </div>
+
+        <div class="form-card" style="max-width: 600px; margin-bottom: 24px;">
+            <h3 style="font-size: 15px; font-weight: 700; margin-bottom: 12px;">Nueva zona</h3>
+            <form th:action="@{/admin/lugares/{id}/zonas(id=${lugar.id})}" method="post">
+                <div class="form-group">
+                    <label for="nombre">Nombre de la zona</label>
+                    <input type="text" id="nombre" name="nombre" required placeholder="Ej. Planta baja, Balcón, Zona VIP">
+                </div>
+                <div class="form-grid-2col">
+                    <div class="form-group">
+                        <label for="filas">Filas (A-Z)</label>
+                        <input type="number" id="filas" name="filas" required min="1" max="26" value="5">
+                    </div>
+                    <div class="form-group">
+                        <label for="asientosPorFila">Asientos por fila</label>
+                        <input type="number" id="asientosPorFila" name="asientosPorFila" required min="1" max="50" value="10">
+                    </div>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--color-neutro); margin-bottom: 12px;">
+                    Los asientos se generan automáticamente: filas A, B, C… numeradas desde el 1.
+                </p>
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">Crear Zona</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="events-grid" th:if="${not #lists.isEmpty(zonas)}">
+            <article class="event-dashboard-card" th:each="zona : ${zonas}">
+                <div class="card-body">
+                    <h2 class="card-title" th:text="${zona.nombre}">Zona</h2>
+                    <div class="card-meta"
+                         th:text="${zona.filas} + ' filas × ' + ${zona.asientosPorFila} + ' asientos'">Distribución</div>
+                    <div class="card-status-badge status-publicado"
+                         th:text="${zona.capacidad} + ' asientos'">Capacidad</div>
+
+                    <div class="card-actions-footer">
+                        <form th:action="@{/admin/lugares/{id}/zonas/{zonaId}/eliminar(id=${lugar.id}, zonaId=${zona.id})}"
+                              method="post" style="display:inline">
+                            <button type="submit" class="btn-card-action color-delete"
+                                    onclick="return confirm('¿Eliminar esta zona y todos sus asientos?')">Borrar</button>
+                        </form>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+        <p th:if="${#lists.isEmpty(zonas)}" class="subtitle">
+            Este lugar aún no tiene zonas. Los boletos de sus eventos se venderán por cantidad, sin asiento numerado.
+        </p>
+    </main>
+</div>
+
+</body>
+</html>
