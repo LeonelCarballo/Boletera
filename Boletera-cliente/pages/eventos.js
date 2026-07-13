@@ -112,6 +112,14 @@ function aplicarFiltros() {
         document.querySelectorAll('input[name="categoria"]:checked:not(#cat-todos)')
     ).map(c => c.value);
 
+    const usuarioActual = AuthService.getUser();
+    if (AuthService.isAutenticate() && usuarioActual && usuarioActual.activo === false) {
+        // Si el usuario esta suspendido, devolvemos una lista vacia de una, sin renderizar nada
+        renderEventos([]);
+        renderPaginacion(0);
+        return;
+    }
+
     let filtrados = todosLosEventos.filter(evento => {
 
         if (evento.inactivo) {

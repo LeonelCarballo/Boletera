@@ -43,6 +43,15 @@ function renderHeader() {
 async function cargarEventos() {
     const container = document.getElementById('eventos-container');
 
+    //si la cuenta es activa muestra los eventos, inactiva los oculta
+    const usuarioActual = AuthService.getUser();
+    if (AuthService.isAutenticate() && usuarioActual && 
+        (usuarioActual.activo === false || usuarioActual.activo === 0 || usuarioActual.activo === "false")) {
+        
+        container.innerHTML = '<p class="subtitle">Tu cuenta se encuentra suspendida temporalmente. No hay eventos disponibles.</p>';
+        return;
+    }
+
     try {
         
         const todosLosEventos = await EventoService.getAll();
