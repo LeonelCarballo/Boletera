@@ -26,4 +26,7 @@ public class TicketDTO {
     private String lugarCiudad;
 
     private LocalDateTime fechaCompra;
+
+    private String zonaNombre;
+    private String asiento;
 }
