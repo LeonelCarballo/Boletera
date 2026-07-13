@@ -40,27 +40,18 @@ public class UsuarioService {
 
 
     /**
-     * Actualiza un usuario desde el formulario de administración web.
+     * Actualiza un usuario desde el formulario del panel admin.
      */
     public void actualizarUsuarioDesdeFormulario(Long id, String nombre, String email, String contrasenia, String telefono) {
-        // 1. Validar que el usuario exista
+        // Validar que el usuario exista
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("No se encontró el usuario con el id " + id));
 
-        // 2. Actualizar los campos obligatorios
+        // Actualizar los campos obligatorios
         usuario.setNombre(nombre);
         usuario.setEmail(email);
         usuario.setTelefono(telefono);
 
-
-        // 3. Lógica para la contraseña: solo se cambia si el administrador escribió algo
-        if (contrasenia != null && !contrasenia.trim().isEmpty()) {
-            // Si usas PasswordEncoder (recomendado), descomenta la línea de abajo y borra la asignación directa:
-//             usuario.setContrasenia(passwordEncoder.encode(contrasenia));
-            usuario.setContrasenia(contrasenia);
-        }
-
-        // 4. Guardar los cambios (JPA se encarga de actualizar tanto la tabla Usuario como la hija Cliente/Admin)
         usuarioRepository.save(usuario);
     }
 

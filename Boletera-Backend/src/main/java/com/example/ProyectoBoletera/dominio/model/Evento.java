@@ -57,6 +57,8 @@ public class Evento {
     @OneToMany(mappedBy = "evento")
     private List<Boleto> boletos;
 
+    private boolean inactivo;
+
     public Evento(String nombre, String descripcion, LocalDateTime fecha, LocalDateTime fechaFin,
                   String imagenUrl, int capacidadTotal, CategoriaEvento categoria,
                   EstadoEvento estado, Administrador administrador, Lugar lugar) {
@@ -70,5 +72,6 @@ public class Evento {
         this.estado = estado;
         this.administrador = administrador;
         this.lugar = lugar;
+        this.inactivo = false;
     }
 }
