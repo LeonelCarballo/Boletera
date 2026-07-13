@@ -32,9 +32,25 @@
                 </article>
 
                 <article class="metric-card">
-                    <h2 class="metric-label">Eventos Activos</h2>
+                    <h2 class="metric-label">Total de Eventos</h2>
                     <p class="metric-value">
                         <span th:text="${totalEventos}">0</span>
+                        <span class="metric-unit">eventos</span>
+                    </p>
+                </article>
+
+                <article class="metric-card">
+                    <h2 class="metric-label">Eventos <span style="color: #059669">Activos</span></h2>
+                    <p class="metric-value">
+                        <span th:text="${totalEventosActivos}">0</span>
+                        <span class="metric-unit">eventos</span>
+                    </p>
+                </article>
+
+                <article class="metric-card">
+                    <h2 class="metric-label">Eventos <span style="color: var(--color-neutro)">Inactivos</span></h2>
+                    <p class="metric-value">
+                        <span th:text="${totalEventosInactivos}">0</span>
                         <span class="metric-unit">eventos</span>
                     </p>
                 </article>

@@ -51,9 +51,9 @@
                         <!-- Activar/desactivar evento -->
                         <form th:action="@{/admin/eventos/{id}/alternar-estado(id=${evento.id})}" method="post" style="display:inline">
                             <button type="submit"
-                                    th:class="${evento.inactivo} ? 'btn-card-action color-edit' : 'btn-card-action color-delete'"
+                                    th:class="${evento.inactivo} ? 'btn-card-action color-activate' : 'btn-card-action color-delete'"
                                     th:text="${evento.inactivo} ? 'Activar' : 'Desactivar'"
-                                    style="border: 1px solid currentColor; background: transparent; cursor: pointer;">
+                                    style="background: transparent; cursor: pointer;">
                                 Desactivar
                             </button>
                         </form>

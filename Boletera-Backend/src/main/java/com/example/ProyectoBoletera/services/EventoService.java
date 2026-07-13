@@ -258,6 +258,7 @@ public class EventoService {
         return eventoRepository.save(evento);
     }
 
+    //Alterna el estado del evento (ACTIVO/INACTIVO)
     @Transactional
     public void alternarEstadoInactivo(Long id) {
         // Busca el evento
@@ -268,6 +269,16 @@ public class EventoService {
         evento.setInactivo(!evento.isInactivo());
 
         eventoRepository.save(evento);
+    }
+
+    // Contar todos los eventos inactivos
+    public long contarInactivos() {
+        return eventoRepository.countByInactivoTrue();
+    }
+
+    //Contar todos los eventos activos
+    public long contarActivos() {
+        return eventoRepository.countByInactivoFalse();
     }
 
 

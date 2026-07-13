@@ -15,4 +15,6 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
     List<Evento> findByCategoria(CategoriaEvento categoria);
     List<Evento> findByAdministradorId(Long administradorId);
     List<Evento> findByInactivoFalse();
+    long countByInactivoTrue(); //para contar eventos inactivos
+    long countByInactivoFalse(); // para contar events inactivos
 }
